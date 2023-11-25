@@ -1,4 +1,4 @@
-package kg.amanturov.jortartip.controller.Auth;
+package kg.amanturov.jortartip.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
