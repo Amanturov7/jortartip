@@ -52,8 +52,16 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    public static final String SUPER_ADMIN = "SUPER_ADMIN";
     public static final String ADMIN = "ADMIN";
+    public static final String MODERATOR = "MODERATOR";
+
+
+
     public static final String USER = "USER";
-    public static final String USER_RUVH = "USER_RUVH";
-    public static final String ADMIN_RUVH = "ADMIN_RUVH";
+    public static final String USER_TESTER = "USER_TESTER";
+    public static final String USER_SELLER = "USER_SELLER";
+    public static final String EMPLOYEE = "USER_EMPLOYEE";
+    public static final String ADMIN_EMPLOYEE = "ADMIN_EMPLOYEE";
+
 }
