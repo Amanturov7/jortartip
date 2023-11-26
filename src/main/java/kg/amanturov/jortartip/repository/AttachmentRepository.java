@@ -10,10 +10,6 @@ import java.util.Optional;
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachments, Long> {
 
-//    List<Attachments> findAllByWaterUsersId(Long id);
-//    List<Attachments> findAllBySystemObjectId(Long id);
-//    List<Attachments> findAllByIrrigationSystemId(Long id);
-//    List<Attachments> findAllByOrganizationId(Long id);
+//    List<Attachments> findAllByUser(Long id);
     Optional<Attachments> findById(Long id);
-//    List<Attachments> findByOrganizationId(Long organizationId);
 }
