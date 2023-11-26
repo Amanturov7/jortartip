@@ -23,17 +23,10 @@ public interface FileStorageService {
     AttachmentResponseDto getAttachmentById(Long id);
 
 
-//    void updateAttachments(FakeIrrigation fakeIrrigation, Long id);
-//    void updateAttachments(SystemObject systemObject,Long id);
-//    void updateAttachments(WaterUsers waterUsers,Long id);
-//    void updateAttachments(Organization organization,Long id);
 
-//    List<AttachmentResponseDto> findBySystemId(Long id);
-//    List<AttachmentResponseDto> findByObjectId(Long id);
-//
-//    List<AttachmentResponseDto> findByWaterUserId(Long id);
-//
-//    List<AttachmentResponseDto> findByOrganizationId(Long id);
+//    void updateAttachments(User user,Long id);
+//    List<AttachmentResponseDto> findByUserId(Long id);
+
 
     Resource convertFileFromPath(Attachments attachments) throws IOException;
 
