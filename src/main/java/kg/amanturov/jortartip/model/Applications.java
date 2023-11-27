@@ -21,8 +21,14 @@ public class Applications {
 
     private float lat;
 
+    private String status;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "violations_id")
     private CommonReference typeViolations;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
