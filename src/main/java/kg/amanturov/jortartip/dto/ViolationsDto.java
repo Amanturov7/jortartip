@@ -5,19 +5,15 @@ import lombok.Data;
 import java.security.Timestamp;
 
 @Data
-public class ApplicationsDto {
+public class ViolationsDto {
     private Long id;
     private String title;
+    private String statya;
+    private Integer part;
     private String description;
-    private String place;
-    private float lon;
-    private float lat;
-    private Long status;
-    private Long regionId;
-    private Long districtId;
-    private Long typeViolationsId;
-    private Long userId;
     private Timestamp createdDate;
     private Timestamp updateDate;
-
+    private Float costFiz;
+    private Float costUr;
+    private Long organId;
 }

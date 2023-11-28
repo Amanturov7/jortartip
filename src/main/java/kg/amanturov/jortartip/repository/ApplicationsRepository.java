@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface ApplicationsRepository extends JpaRepository<Applications, Long> {
 
-    List<Applications> findApplicationsByStatusAndUserId(String status, Long id );
+    List<Applications> findApplicationsByStatusIdAndUserId(Long status, Long id );
 
     List<Applications> findAllByUserId(Long id);
 

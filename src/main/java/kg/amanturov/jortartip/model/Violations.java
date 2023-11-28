@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.security.Timestamp;
+
 
 @Entity
 @NoArgsConstructor
@@ -23,6 +25,10 @@ public class Violations {
     private Integer part;
 
     private String description;
+
+    private Timestamp createdDate;
+
+    private Timestamp updateDate;
 
     private Float costFiz;
 

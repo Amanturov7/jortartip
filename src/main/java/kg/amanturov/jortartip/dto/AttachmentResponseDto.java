@@ -12,11 +12,9 @@ public class AttachmentResponseDto {
     private Long AttachmentId;
     private String name;
     private String downloadUrl;
-    private Long waterUserId;
+    private Long userId;
+    private Long violationsId;
     private Resource file;
-    private Long organizationId;
-    private Long objectId;
-    private Long systemId;
     private String description;
     private String originName;
 

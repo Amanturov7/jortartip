@@ -30,4 +30,8 @@ public class Attachments {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "violations_id")
+    private Violations violationsId;
+
 }
