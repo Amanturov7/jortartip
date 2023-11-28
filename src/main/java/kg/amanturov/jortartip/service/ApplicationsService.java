@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface ApplicationsService {
     List<Applications> findByUser(Long id);
-    List<Applications> findByStatusAndUserId(String status, Long id );
+
+    List<Applications> findByStatusAndUserId(Long status, Long id);
 
     Applications save(Applications application);
 

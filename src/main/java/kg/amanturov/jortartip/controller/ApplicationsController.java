@@ -31,9 +31,9 @@ public class ApplicationsController {
     @GetMapping("/user/status/")
     public List<ApplicationsDto> getApplicationsByStatusAndUser(
             @RequestParam (name = "userId") Long userId,
-            @RequestParam (name = "status") String status
+            @RequestParam (name = "statusId") Long statusId
     ) {
-        List<Applications> applicationsList = applicationsService.findByStatusAndUserId(status, userId);
+        List<Applications> applicationsList = applicationsService.findByStatusAndUserId(statusId, userId);
         return applicationsList.stream()
                 .map(applicationsService::convertEntityToDto)
                 .collect(Collectors.toList());

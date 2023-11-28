@@ -5,6 +5,7 @@ import kg.amanturov.jortartip.dto.AttachmentResponseDto;
 import kg.amanturov.jortartip.model.Attachments;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
 
+import kg.amanturov.jortartip.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -18,10 +19,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -29,6 +28,8 @@ import java.util.stream.Stream;
 public class FileStorageServiceImpl implements FileStorageService {
 
     private final AttachmentRepository repository;
+    private final UserService userService;
+    private final ViolationsService violationsService;
 
     @Value("${file.storage.photos}")
     private String photoDirectory;
@@ -36,8 +37,10 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String videoDirectory;
 
 
-    public FileStorageServiceImpl(AttachmentRepository repository) {
+    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ViolationsService violationsService) {
         this.repository = repository;
+        this.userService = userService;
+        this.violationsService = violationsService;
     }
 
 
@@ -99,6 +102,8 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setType(dto.getType());
         responseDto.setExtension(extension);
         responseDto.setName(fileName);
+        responseDto.setViolationsId(dto.getViolationsId());
+        responseDto.setUserId(dto.getUserId());
         responseDto.setDescription(dto.getDescription());
         responseDto.setOriginName(dto.getOriginName());
         Attachments attachments = convertDtoToEntity(responseDto);
@@ -114,6 +119,12 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setExtension(attachment.getExtension());
         responseDto.setName(attachment.getName());
         responseDto.setAttachmentId(attachment.getId());
+        if(attachment.getUser() != null) {
+            responseDto.setUserId(attachment.getUser().getId());
+        }
+        if(attachment.getViolationsId() != null) {
+            responseDto.setViolationsId(attachment.getViolationsId().getId());
+        }
         return responseDto;
     }
 
@@ -128,6 +139,12 @@ public class FileStorageServiceImpl implements FileStorageService {
             responseDto.setDescription(attachment.getDescription());
             responseDto.setOriginName(attachment.getName());
             responseDto.setExtension(attachment.getExtension());
+            if(attachment.getUser() != null) {
+                responseDto.setUserId(attachment.getUser().getId());
+            }
+            if(attachment.getViolationsId() != null) {
+                responseDto.setViolationsId(attachment.getViolationsId().getId());
+            }
             responseDto.setName(attachment.getName());
             return responseDto;
         } else {
@@ -142,17 +159,29 @@ public class FileStorageServiceImpl implements FileStorageService {
         attachments.setName(responseDto.getName());
         attachments.setPath(responseDto.getFilePath());
         attachments.setDescription(responseDto.getDescription());
+        if(responseDto.getUserId() != null) {
+            attachments.setUser(userService.findById(responseDto.getUserId()));
+        }
+        if(responseDto.getViolationsId() != null) {
+            attachments.setViolationsId(violationsService.findById(responseDto.getViolationsId()));
+        }
         return attachments;
     }
-    private AttachmentResponseDto convertDtoToEntity(Attachments responseDto) {
-        AttachmentResponseDto attachments = new AttachmentResponseDto();
-        attachments.setExtension(responseDto.getExtension());
-        attachments.setType(responseDto.getType());
-        attachments.setName(responseDto.getName());
-        attachments.setFilePath(responseDto.getPath());
-        attachments.setAttachmentId(responseDto.getId());
-        attachments.setDescription(responseDto.getDescription());
-        return attachments;
+    private AttachmentResponseDto convertDtoToEntity(Attachments attachments) {
+        AttachmentResponseDto responseDto = new AttachmentResponseDto();
+        responseDto.setExtension(attachments.getExtension());
+        responseDto.setType(attachments.getType());
+        responseDto.setName(attachments.getName());
+        responseDto.setFilePath(attachments.getPath());
+        responseDto.setAttachmentId(attachments.getId());
+        responseDto.setDescription(attachments.getDescription());
+        if(attachments.getUser() != null) {
+            responseDto.setUserId(attachments.getUser().getId());
+        }
+        if(attachments.getViolationsId() != null) {
+            responseDto.setViolationsId(attachments.getViolationsId().getId());
+        }
+        return responseDto;
     }
 
     @Override
