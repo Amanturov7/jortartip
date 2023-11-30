@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 
 
 @RestController
-@RequestMapping("/rest/attachment")
+@RequestMapping("/rest/attachments")
 public class AttachmentController {
 
     private final FileStorageService service;

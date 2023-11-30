@@ -1,6 +1,7 @@
 package kg.amanturov.jortartip.service;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import kg.amanturov.jortartip.model.CommonReference;
 import kg.amanturov.jortartip.model.CommonReferenceType;
 import kg.amanturov.jortartip.repository.CommonReferenceRepository;
@@ -8,6 +9,7 @@ import kg.amanturov.jortartip.repository.CommonReferenceTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -49,8 +51,15 @@ public class CommonReferenceServiceImpl implements CommonReferenceService {
 
     @Override
     public CommonReference findById(Long id) {
-        return repository.findById(id).get();
+        Optional<CommonReference> optionalCommonReference = repository.findById(id);
+
+        if (optionalCommonReference.isPresent()) {
+            return optionalCommonReference.get();
+        } else {
+            throw new EntityNotFoundException("CommonReference with ID " + id + " not found");
+        }
     }
+
 
     @Override
     public List<CommonReferenceType> findAllTyeps() {

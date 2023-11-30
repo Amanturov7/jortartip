@@ -13,7 +13,9 @@ public class AttachmentResponseDto {
     private String name;
     private String downloadUrl;
     private Long userId;
-    private Long violationsId;
+    private Long appicationsId;
+    private Long ticketsId;
+
     private Resource file;
     private String description;
     private String originName;

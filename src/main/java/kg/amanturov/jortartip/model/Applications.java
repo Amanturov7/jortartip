@@ -2,8 +2,7 @@ package kg.amanturov.jortartip.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 @Data
 @Entity
