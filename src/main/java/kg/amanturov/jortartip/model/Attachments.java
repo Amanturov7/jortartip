@@ -31,7 +31,12 @@ public class Attachments {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "violations_id")
-    private Violations violationsId;
+    @JoinColumn(name = "applications_id")
+    private Applications applications;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tickets_id")
+    private Tickets ticketsId;
+
 
 }

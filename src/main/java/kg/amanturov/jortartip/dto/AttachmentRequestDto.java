@@ -9,6 +9,6 @@ public class AttachmentRequestDto {
     private String originName;
     private String description;
     private Long userId;
-    private Long violationsId;
-
+    private Long applicationsId;
+    private Long ticketsId;
 }

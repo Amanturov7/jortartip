@@ -1,0 +1,19 @@
+package kg.amanturov.jortartip.service;
+
+
+import kg.amanturov.jortartip.dto.TicketsDto;
+import kg.amanturov.jortartip.model.Tickets;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface TicketsService {
+    List<TicketsDto> getAllTickets();
+
+    Optional<TicketsDto>getTicketById(Long id);
+
+
+    TicketsDto saveTicket(TicketsDto ticketsDto);
+
+    void deleteTicket(Long id);
+}

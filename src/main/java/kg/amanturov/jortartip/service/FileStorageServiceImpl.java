@@ -29,7 +29,7 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     private final AttachmentRepository repository;
     private final UserService userService;
-    private final ViolationsService violationsService;
+    private final ApplicationsService applicationsService;
 
     @Value("${file.storage.photos}")
     private String photoDirectory;
@@ -37,10 +37,10 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String videoDirectory;
 
 
-    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ViolationsService violationsService) {
+    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService) {
         this.repository = repository;
         this.userService = userService;
-        this.violationsService = violationsService;
+        this.applicationsService = applicationsService;
     }
 
 
@@ -102,8 +102,9 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setType(dto.getType());
         responseDto.setExtension(extension);
         responseDto.setName(fileName);
-        responseDto.setViolationsId(dto.getViolationsId());
+        responseDto.setAppicationsId(dto.getApplicationsId());
         responseDto.setUserId(dto.getUserId());
+        responseDto.setTicketsId(dto.getTicketsId());
         responseDto.setDescription(dto.getDescription());
         responseDto.setOriginName(dto.getOriginName());
         Attachments attachments = convertDtoToEntity(responseDto);
@@ -118,12 +119,16 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setType(attachment.getType());
         responseDto.setExtension(attachment.getExtension());
         responseDto.setName(attachment.getName());
+
+        if(attachment.getTicketsId() != null ){
+            responseDto.setTicketsId(attachment.getTicketsId().getId());
+        }
         responseDto.setAttachmentId(attachment.getId());
         if(attachment.getUser() != null) {
             responseDto.setUserId(attachment.getUser().getId());
         }
-        if(attachment.getViolationsId() != null) {
-            responseDto.setViolationsId(attachment.getViolationsId().getId());
+        if(attachment.getApplications() != null) {
+            responseDto.setAppicationsId(attachment.getApplications().getId());
         }
         return responseDto;
     }
@@ -139,11 +144,14 @@ public class FileStorageServiceImpl implements FileStorageService {
             responseDto.setDescription(attachment.getDescription());
             responseDto.setOriginName(attachment.getName());
             responseDto.setExtension(attachment.getExtension());
+            if(attachment.getTicketsId() != null ){
+                responseDto.setTicketsId(attachment.getTicketsId().getId());
+            }
             if(attachment.getUser() != null) {
                 responseDto.setUserId(attachment.getUser().getId());
             }
-            if(attachment.getViolationsId() != null) {
-                responseDto.setViolationsId(attachment.getViolationsId().getId());
+            if(attachment.getApplications() != null) {
+                responseDto.setAppicationsId(attachment.getApplications().getId());
             }
             responseDto.setName(attachment.getName());
             return responseDto;
@@ -159,11 +167,15 @@ public class FileStorageServiceImpl implements FileStorageService {
         attachments.setName(responseDto.getName());
         attachments.setPath(responseDto.getFilePath());
         attachments.setDescription(responseDto.getDescription());
+
+        if(responseDto.getTicketsId() != null ){
+            responseDto.setTicketsId(responseDto.getTicketsId());
+        }
         if(responseDto.getUserId() != null) {
             attachments.setUser(userService.findById(responseDto.getUserId()));
         }
-        if(responseDto.getViolationsId() != null) {
-            attachments.setViolationsId(violationsService.findById(responseDto.getViolationsId()));
+        if(responseDto.getAppicationsId() != null) {
+            attachments.setApplications(applicationsService.findById(responseDto.getAppicationsId()));
         }
         return attachments;
     }
@@ -175,11 +187,14 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setFilePath(attachments.getPath());
         responseDto.setAttachmentId(attachments.getId());
         responseDto.setDescription(attachments.getDescription());
+        if(attachments.getTicketsId() != null ){
+            responseDto.setTicketsId(attachments.getTicketsId().getId());
+        }
         if(attachments.getUser() != null) {
             responseDto.setUserId(attachments.getUser().getId());
         }
-        if(attachments.getViolationsId() != null) {
-            responseDto.setViolationsId(attachments.getViolationsId().getId());
+        if(attachments.getApplications() != null) {
+            responseDto.setAppicationsId(attachments.getApplications().getId());
         }
         return responseDto;
     }

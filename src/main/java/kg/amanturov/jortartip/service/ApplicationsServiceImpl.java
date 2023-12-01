@@ -30,7 +30,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     }
 
     @Override
-    public List<Applications> findByStatusAndUserId(Long status, Long id ) {
+    public List<Applications> findByStatusAndUserId(Long status, Long id) {
         return repository.findApplicationsByStatusIdAndUserId(status, id);
     }
 
@@ -90,6 +90,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         if (applications.getTypeViolations() != null) {
             applicationsDto.setTypeViolationsId(applications.getTypeViolations().getId());
         }
+
         return applicationsDto;
     }
 
@@ -101,7 +102,9 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applications.setLat(applicationsDto.getLat());
         applications.setLon(applicationsDto.getLon());
         applications.setPlace(applicationsDto.getPlace());
-        applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
+        if(applicationsDto.getStatus() != null){
+            applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
+        }
         applications.setTitle(applicationsDto.getTitle());
         applications.setCreatedDate(applicationsDto.getCreatedDate());
         applications.setUpdateDate(applicationsDto.getUpdateDate());

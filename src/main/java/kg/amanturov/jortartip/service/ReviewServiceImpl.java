@@ -2,7 +2,9 @@ package kg.amanturov.jortartip.service;
 
 
 import kg.amanturov.jortartip.dto.ReviewDto;
+import kg.amanturov.jortartip.dto.TicketsDto;
 import kg.amanturov.jortartip.model.Review;
+import kg.amanturov.jortartip.model.Tickets;
 import kg.amanturov.jortartip.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
@@ -86,5 +88,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return reviewDto;
     }
+
+
 
 }
