@@ -25,7 +25,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
 
-    @GetMapping("/review/{id}")
+    @GetMapping(value ="/review/{id}")
     public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
         Review review = reviewService.findById(id);
         if (review != null) {
@@ -41,7 +41,7 @@ public class ReviewController {
         return ResponseEntity.ok(createdReview);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping(value ="/update/{id}")
     public ResponseEntity<Review> updateReview(
             @PathVariable Long id,
             @RequestBody ReviewDto reviewDto
@@ -54,7 +54,7 @@ public class ReviewController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping(value ="/delete/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         reviewService.delete(id);
         return ResponseEntity.noContent().build();

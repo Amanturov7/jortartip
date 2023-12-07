@@ -20,7 +20,7 @@ public class ApplicationsController {
         this.applicationsService = applicationsService;
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping(value ="/user/{userId}")
     public List<ApplicationsDto> getApplicationsByUser(@PathVariable Long userId) {
         List<Applications> applicationsList = applicationsService.findByUser(userId);
         return applicationsList.stream()
@@ -28,7 +28,7 @@ public class ApplicationsController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/user/status/")
+    @GetMapping(value ="/user/status/")
     public List<ApplicationsDto> getApplicationsByStatusAndUser(
             @RequestParam (name = "userId") Long userId,
             @RequestParam (name = "statusId") Long statusId
@@ -39,19 +39,19 @@ public class ApplicationsController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/create")
+    @PostMapping(value ="/create")
     public ApplicationsDto createApplication(@RequestBody ApplicationsDto applicationsDto) {
         Applications createdApplication = applicationsService.convertDtoToEntity(applicationsDto);
         return applicationsService.convertEntityToDto(applicationsService.save(createdApplication));
     }
 
-    @GetMapping("/all")
+    @GetMapping(value ="/all")
     public List<ApplicationsDto> getAllApplications() {
         return applicationsService.findAll();
     }
 
 
-    @PutMapping("/update/{id}")
+    @PutMapping(value = "/update/{id}")
     public ApplicationsDto updateApplication(
             @PathVariable Long id,
             @RequestBody ApplicationsDto applicationsDto
@@ -62,7 +62,7 @@ public class ApplicationsController {
 
         return applicationsService.convertEntityToDto(applicationsService.save(updatedApplication));
     }
-    @DeleteMapping("/delete/{id}")void delete(Long id)
+    @DeleteMapping(value = "/delete/{id}")void delete(Long id)
     {applicationsService.deleteApplications(id);}
 
 }
