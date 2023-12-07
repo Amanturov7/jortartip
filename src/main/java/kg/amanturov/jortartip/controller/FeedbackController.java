@@ -18,7 +18,7 @@ public class FeedbackController {
         this.feedbackService = feedbackService;
     }
 
-    @PostMapping
+    @PostMapping(value ="/create")
     public ResponseEntity<String> submitFeedback(@RequestBody FeedbackDto feedbackDto) {
         Feedback feedback = feedbackService.convertDtoToEntity(feedbackDto);
         feedbackService.saveFeedback(feedback);

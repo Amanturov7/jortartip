@@ -29,7 +29,7 @@ public class ViolationsController {
         return new ResponseEntity<>(violationsDtoList, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value ="/{id}")
     public ResponseEntity<ViolationsDto> getViolationsById(@PathVariable Long id) {
         Violations violations = violationsService.findById(id);
         if (violations != null) {
@@ -40,7 +40,7 @@ public class ViolationsController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping(value ="/create")
     public ResponseEntity<ViolationsDto> createViolations(@RequestBody ViolationsDto violationsDto) {
         Violations violationsEntity = violationsService.convertDtoToEntity(violationsDto);
         Violations createdViolations = violationsService.save(violationsEntity);
@@ -48,7 +48,7 @@ public class ViolationsController {
         return new ResponseEntity<>(createdViolationsDto, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping(value ="/update/{id}")
     public ResponseEntity<ViolationsDto> updateViolations(
             @PathVariable Long id,
             @RequestBody ViolationsDto violationsDto
@@ -65,7 +65,7 @@ public class ViolationsController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping(value ="/delete/{id}")
     public ResponseEntity<Void> deleteViolations(@PathVariable Long id) {
         violationsService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

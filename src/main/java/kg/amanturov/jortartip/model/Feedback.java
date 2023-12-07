@@ -19,11 +19,10 @@ public class Feedback {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedbackType_id")
+    @JoinColumn(name = "feedback_type_id")
     private CommonReference feedbackType;
 
     private String message;
-
 
     private Timestamp createdDate;
 

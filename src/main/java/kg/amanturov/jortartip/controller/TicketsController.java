@@ -23,20 +23,20 @@ public class TicketsController {
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
-    @GetMapping("/ticket/{id}")
+    @GetMapping(value ="/ticket/{id}")
     public ResponseEntity<TicketsDto> getTicketById(@PathVariable Long id) {
         return ticketsService.getTicketById(id)
                 .map(ticketDto -> new ResponseEntity<>(ticketDto, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/create")
+    @PostMapping(value ="/create")
     public ResponseEntity<TicketsDto> createTicket(@RequestBody TicketsDto ticketsDto) {
         TicketsDto createdTicket = ticketsService.saveTicket(ticketsDto);
         return new ResponseEntity<>(createdTicket, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping(value ="/delete/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         ticketsService.deleteTicket(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
