@@ -51,18 +51,15 @@ public class ApplicationsController {
     }
 
 
-    @PutMapping(value = "/update/{id}")
+    @PutMapping(value = "/update")
     public ApplicationsDto updateApplication(
-            @PathVariable Long id,
             @RequestBody ApplicationsDto applicationsDto
     ) {
-        Applications existingApplication = applicationsService.findById(id);
-        Applications updatedApplication = applicationsService.convertDtoToEntity(applicationsDto);
-        updatedApplication.setId(existingApplication.getId());
-
-        return applicationsService.convertEntityToDto(applicationsService.save(updatedApplication));
+        return applicationsService.update(applicationsDto);
     }
-    @DeleteMapping(value = "/delete/{id}")void delete(Long id)
+
+
+    @DeleteMapping(value = "/delete/{id}")void delete(@PathVariable Long id)
     {applicationsService.deleteApplications(id);}
 
 }

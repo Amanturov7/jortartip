@@ -1,9 +1,14 @@
 package kg.amanturov.jortartip.service;
 
+import jakarta.transaction.Transactional;
 import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.model.Applications;
 import kg.amanturov.jortartip.repository.ApplicationsRepository;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +44,37 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     public Applications save(Applications application) {
         return repository.save(application);
     }
+    @Override
+    public ApplicationsDto update(ApplicationsDto applicationsDto) {
+        Applications applications = new Applications();
+        Applications existingApplication = repository.findById(applicationsDto.getId()).orElse(null);
+        if (existingApplication != null) {
+            applications.setDescription(applicationsDto.getDescription());
+            applications.setLat(applicationsDto.getLat());
+            applications.setLon(applicationsDto.getLon());
+            applications.setPlace(applicationsDto.getPlace());
+            applications.setId(applicationsDto.getId());
+
+            if (applicationsDto.getStatus() != null) {
+                applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
+            }
+            applications.setTitle(applicationsDto.getTitle());
+            Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+            applications.setUpdateDate(timestamp);
+            applications.setCreatedDate(applicationsDto.getCreatedDate());
+
+            if (applicationsDto.getUserId() != null) {
+                applications.setUser(userService.findById(applicationsDto.getUserId()));
+            }
+            if (applicationsDto.getTypeViolationsId() != null) {
+                applications.setTypeViolations(violationsService.findById(applicationsDto.getTypeViolationsId()));
+            }
+        }
+        Applications updatedApplication = repository.save(applications);
+        return convertEntityToDto(updatedApplication); // Implement this method to convert Applications to ApplicationsDto
+    }
+
+
 
     @Override
     public Applications findById(Long id) {
@@ -93,7 +129,6 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
 
         return applicationsDto;
     }
-
     @Override
     public Applications convertDtoToEntity(ApplicationsDto applicationsDto) {
         Applications applications = new Applications();
@@ -106,7 +141,11 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
             applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
         }
         applications.setTitle(applicationsDto.getTitle());
-        applications.setCreatedDate(applicationsDto.getCreatedDate());
+
+        LocalDate currentDate = LocalDate.now();
+        Timestamp timestamp = Timestamp.valueOf(currentDate.atStartOfDay());
+        applications.setCreatedDate(timestamp);
+
         applications.setUpdateDate(applicationsDto.getUpdateDate());
 
         if (applicationsDto.getUserId() != null) {

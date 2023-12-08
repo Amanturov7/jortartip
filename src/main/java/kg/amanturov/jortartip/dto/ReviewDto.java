@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ReviewDto {
+    private Long id;
     private Float lat;
     private Float lon;
     private String locationAddress;
