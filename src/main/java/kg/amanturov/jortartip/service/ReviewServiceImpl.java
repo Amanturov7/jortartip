@@ -9,6 +9,7 @@ import kg.amanturov.jortartip.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -24,8 +25,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> findAll() {
-        return repository.findAll();
+    public List<ReviewDto> findAll() {
+        List<Review> reviews = repository.findAll();
+        return reviews.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -36,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review save(ReviewDto reviewDto) {
         Review review = convertDtoToEntity(reviewDto);
-        return repository.save(review);
+         return repository.save(review);
     }
 
     @Override
@@ -58,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
     private Review convertDtoToEntity(ReviewDto reviewDto) {
         Review review = new Review();
         review.setLat(reviewDto.getLat());
+        review.setId(reviewDto.getId());
         review.setLon(reviewDto.getLon());
         review.setLocationAddress(reviewDto.getLocationAddress());
         review.setDescription(reviewDto.getDescription());
@@ -71,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewDto convertEntityToDto(Review review) {
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setLat(review.getLat());
+        reviewDto.setId(review.getId());
         reviewDto.setLon(review.getLon());
         reviewDto.setLocationAddress(review.getLocationAddress());
         reviewDto.setDescription(review.getDescription());

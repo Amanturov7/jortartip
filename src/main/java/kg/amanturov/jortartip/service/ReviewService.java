@@ -7,7 +7,7 @@ import kg.amanturov.jortartip.model.Review;
 import java.util.List;
 
 public interface ReviewService {
-    List<Review> findAll();
+    List<ReviewDto> findAll();
 
     Review findById(Long id);
 

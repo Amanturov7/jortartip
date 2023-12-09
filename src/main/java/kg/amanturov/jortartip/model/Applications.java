@@ -37,7 +37,7 @@ public class Applications {
     private CommonReference district;
 
     private Timestamp createdDate;
-
+    @Column(name = "update_date")
     private Timestamp updateDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

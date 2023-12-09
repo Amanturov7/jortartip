@@ -13,6 +13,8 @@ public interface ApplicationsService {
 
     Applications save(Applications application);
 
+    ApplicationsDto update(ApplicationsDto applicationsDto);
+
     Applications findById(Long id);
 
     ApplicationsDto convertEntityToDto(Applications applications);
