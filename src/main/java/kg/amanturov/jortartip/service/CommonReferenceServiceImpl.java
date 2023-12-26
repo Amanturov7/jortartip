@@ -40,7 +40,7 @@ public class CommonReferenceServiceImpl implements CommonReferenceService {
 
     @Override
     public List<CommonReference> findAllByType(String code) {
-        CommonReferenceType id = typeRepository.findByTitle(code);
+        CommonReferenceType id = typeRepository.findByCode(code);
         return repository.findByTypeId(id.getId());
     }
 
