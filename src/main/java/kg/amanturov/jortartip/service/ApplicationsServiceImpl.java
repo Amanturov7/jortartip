@@ -106,7 +106,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applicationsDto.setLat(applications.getLat());
         applicationsDto.setLon(applications.getLon());
         applicationsDto.setPlace(applications.getPlace());
-        applicationsDto.setTitle(applications.getTitle());
+        applicationsDto.setTitle(applications.getTypeViolations().getTitle());
         applicationsDto.setCreatedDate(applications.getCreatedDate());
         applicationsDto.setUpdateDate(applications.getUpdateDate());
 
@@ -139,6 +139,12 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applications.setPlace(applicationsDto.getPlace());
         if(applicationsDto.getStatus() != null){
             applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
+        }
+        if(applicationsDto.getRegionId() != null){
+            applications.setRegion(commonReferenceService.findById(applicationsDto.getRegionId()));
+        }
+        if(applicationsDto.getDistrictId() != null){
+            applications.setDistrict(commonReferenceService.findById(applicationsDto.getDistrictId()));
         }
         applications.setTitle(applicationsDto.getTitle());
 

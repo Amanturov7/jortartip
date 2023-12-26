@@ -35,7 +35,7 @@ public class ReviewController {
         }
     }
 
-    @PostMapping
+    @PostMapping(value = "/create")
     public ResponseEntity<Review> createReview(@RequestBody ReviewDto reviewDto) {
         Review createdReview = reviewService.save(reviewDto);
         return ResponseEntity.ok(createdReview);
