@@ -20,7 +20,7 @@ public class ViolationsController {
         this.violationsService = violationsService;
     }
 
-    @GetMapping
+    @GetMapping(value = "/all")
     public ResponseEntity<List<ViolationsDto>> getAllViolations() {
         List<Violations> violationsList = violationsService.findAll();
         List<ViolationsDto> violationsDtoList = violationsList.stream()
