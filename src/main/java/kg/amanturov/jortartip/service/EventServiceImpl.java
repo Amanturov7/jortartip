@@ -4,6 +4,9 @@ import kg.amanturov.jortartip.dto.EventDto;
 import kg.amanturov.jortartip.model.Event;
 import kg.amanturov.jortartip.repository.EventRepository;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +50,8 @@ public class EventServiceImpl implements EventService {
         eventDto.setId(event.getId());
         eventDto.setTitle(event.getTitle());
         eventDto.setDescription(event.getDescription());
-        eventDto.setStartDate(event.getStartDate());
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+        eventDto.setStartDate(timestamp);
         eventDto.setEndDate(event.getEndDate());
         return eventDto;
     }

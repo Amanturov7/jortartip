@@ -50,6 +50,11 @@ public class ApplicationsController {
         return applicationsService.findAll();
     }
 
+    @GetMapping(value ="/{id}")
+    public Applications getApplicationById(
+            @PathVariable Long id) {
+        return applicationsService.findById(id);
+    }
 
     @PutMapping(value = "/update")
     public ApplicationsDto updateApplication(
