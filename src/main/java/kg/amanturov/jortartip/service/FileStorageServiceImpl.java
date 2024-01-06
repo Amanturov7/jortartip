@@ -5,7 +5,6 @@ import kg.amanturov.jortartip.dto.AttachmentResponseDto;
 import kg.amanturov.jortartip.model.Attachments;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
 
-import kg.amanturov.jortartip.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -72,6 +71,24 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
         return null;
     }
+
+    @Override
+    public AttachmentResponseDto findByApplicationsId(Long id) {
+         Attachments findAllBySystem = repository.findByApplicationsId(id);
+
+        if (findAllBySystem != null) {
+            AttachmentResponseDto responseDto = mapToAttachmentResponseDto(findAllBySystem);
+            String sanitizedFileName = responseDto.getName();
+            sanitizedFileName = sanitizedFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+            responseDto.setDownloadUrl("http://localhost:8080/rest/attachment/download/" + responseDto.getAttachmentId());
+            responseDto.setName(sanitizedFileName);
+            return responseDto;
+        } else {
+            return null;
+        }
+    }
+
+
 
 
     @Override

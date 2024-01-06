@@ -17,6 +17,8 @@ public interface FileStorageService {
 
     String save(MultipartFile file, String path);
 
+    AttachmentResponseDto findByApplicationsId(Long id);
+
     AttachmentResponseDto saveAttachment(MultipartFile file, AttachmentRequestDto dto) throws IOException;
 
 

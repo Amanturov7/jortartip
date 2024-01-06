@@ -66,10 +66,20 @@ public class ReviewServiceImpl implements ReviewService {
         review.setLon(reviewDto.getLon());
         review.setLocationAddress(reviewDto.getLocationAddress());
         review.setDescription(reviewDto.getDescription());
+        if (reviewDto.getRoadId() != null){
+            review.setRoads(commonReferenceService.findById(reviewDto.getRoadId()));
+        }
+        if (reviewDto.getLightId() != null){
+            review.setLights(commonReferenceService.findById(reviewDto.getLightId()));
+        }
+        if (reviewDto.getRoadSignId() != null){
+            review.setRoadSign(commonReferenceService.findById(reviewDto.getRoadSignId()));
+        }
+        if (reviewDto.getEcologicFactorsId() != null){
+        review.setEcologicFactors(commonReferenceService.findById(reviewDto.getEcologicFactorsId()));
+        }
         review.setUser(userService.findById(reviewDto.getUserId()));
-        review.setRoads(commonReferenceService.findById(reviewDto.getRoadId()));
-        review.setLights(commonReferenceService.findById(reviewDto.getLightId()));
-        review.setRoadSign(commonReferenceService.findById(reviewDto.getRoadSignId()));
+
         return review;
     }
 
@@ -91,6 +101,9 @@ public class ReviewServiceImpl implements ReviewService {
         }
         if (review.getRoadSign() != null) {
             reviewDto.setRoadSignId(review.getRoadSign().getId());
+        }
+        if (review.getEcologicFactors() != null) {
+            reviewDto.setEcologicFactorsId(review.getEcologicFactors().getId());
         }
         return reviewDto;
     }

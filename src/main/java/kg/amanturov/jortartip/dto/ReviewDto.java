@@ -13,4 +13,5 @@ public class ReviewDto {
     private Long roadId;
     private Long lightId;
     private Long roadSignId;
+    private Long ecologicFactorsId;
 }

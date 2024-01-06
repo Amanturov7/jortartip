@@ -146,7 +146,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         if(applicationsDto.getDistrictId() != null){
             applications.setDistrict(commonReferenceService.findById(applicationsDto.getDistrictId()));
         }
-        applications.setTitle(applicationsDto.getTitle());
+        applications.setTitle(violationsService.findById(applicationsDto.getTypeViolationsId()).getTitle());
 
         LocalDate currentDate = LocalDate.now();
         Timestamp timestamp = Timestamp.valueOf(currentDate.atStartOfDay());
