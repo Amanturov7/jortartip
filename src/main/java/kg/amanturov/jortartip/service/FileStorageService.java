@@ -19,6 +19,9 @@ public interface FileStorageService {
 
     AttachmentResponseDto findByApplicationsId(Long id);
 
+    AttachmentResponseDto findByReviewsId(Long id);
+
+
     AttachmentResponseDto saveAttachment(MultipartFile file, AttachmentRequestDto dto) throws IOException;
 
 

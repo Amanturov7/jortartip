@@ -29,6 +29,8 @@ public class FileStorageServiceImpl implements FileStorageService {
     private final AttachmentRepository repository;
     private final UserService userService;
     private final ApplicationsService applicationsService;
+    private final ReviewService reviewService;
+
 
     @Value("${file.storage.photos}")
     private String photoDirectory;
@@ -36,10 +38,11 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String videoDirectory;
 
 
-    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService) {
+    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService, ReviewService reviewService) {
         this.repository = repository;
         this.userService = userService;
         this.applicationsService = applicationsService;
+        this.reviewService = reviewService;
     }
 
 
@@ -74,10 +77,10 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     @Override
     public AttachmentResponseDto findByApplicationsId(Long id) {
-         Attachments findAllBySystem = repository.findByApplicationsId(id);
+         Attachments Attachment = repository.findByApplicationsId(id);
 
-        if (findAllBySystem != null) {
-            AttachmentResponseDto responseDto = mapToAttachmentResponseDto(findAllBySystem);
+        if (Attachment != null) {
+            AttachmentResponseDto responseDto = mapToAttachmentResponseDto(Attachment);
             String sanitizedFileName = responseDto.getName();
             sanitizedFileName = sanitizedFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
             responseDto.setDownloadUrl("http://localhost:8080/rest/attachment/download/" + responseDto.getAttachmentId());
@@ -88,6 +91,21 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
     }
 
+    @Override
+    public AttachmentResponseDto findByReviewsId(Long id) {
+        Attachments Attachment = repository.findByReviewsId(id);
+
+        if (Attachment != null) {
+            AttachmentResponseDto responseDto = mapToAttachmentResponseDto(Attachment);
+            String sanitizedFileName = responseDto.getName();
+            sanitizedFileName = sanitizedFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+            responseDto.setDownloadUrl("http://localhost:8080/rest/attachment/download/" + responseDto.getAttachmentId());
+            responseDto.setName(sanitizedFileName);
+            return responseDto;
+        } else {
+            return null;
+        }
+    }
 
 
 
@@ -122,6 +140,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setAppicationsId(dto.getApplicationsId());
         responseDto.setUserId(dto.getUserId());
         responseDto.setTicketsId(dto.getTicketsId());
+        responseDto.setReviewsId(dto.getReviewsId());
         responseDto.setDescription(dto.getDescription());
         responseDto.setOriginName(dto.getOriginName());
         Attachments attachments = convertDtoToEntity(responseDto);
@@ -146,6 +165,9 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
         if(attachment.getApplications() != null) {
             responseDto.setAppicationsId(attachment.getApplications().getId());
+        }
+        if(attachment.getReviews() != null) {
+            responseDto.setReviewsId(attachment.getReviews().getId());
         }
         return responseDto;
     }
@@ -193,6 +215,9 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
         if(responseDto.getAppicationsId() != null) {
             attachments.setApplications(applicationsService.findById(responseDto.getAppicationsId()));
+        }
+        if(responseDto.getReviewsId() != null) {
+            attachments.setReviews(reviewService.findById(responseDto.getReviewsId()));
         }
         return attachments;
     }

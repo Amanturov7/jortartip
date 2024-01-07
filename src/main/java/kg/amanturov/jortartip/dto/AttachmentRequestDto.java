@@ -11,4 +11,5 @@ public class AttachmentRequestDto {
     private Long userId;
     private Long applicationsId;
     private Long ticketsId;
+    private Long reviewsId;
 }

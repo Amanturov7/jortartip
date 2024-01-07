@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface AttachmentRepository extends JpaRepository<Attachments, Long> {
 
     Attachments findByApplicationsId(Long id);
+    Attachments findByReviewsId(Long id);
     Optional<Attachments> findById(Long id);
 }

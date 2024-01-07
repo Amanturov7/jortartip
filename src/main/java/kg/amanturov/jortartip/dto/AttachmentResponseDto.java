@@ -15,7 +15,7 @@ public class AttachmentResponseDto {
     private Long userId;
     private Long appicationsId;
     private Long ticketsId;
-
+    private Long reviewsId;
     private Resource file;
     private String description;
     private String originName;
