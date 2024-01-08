@@ -12,7 +12,6 @@ public interface CommonReferenceService {
     List<CommonReference> findAll();
 
     List<CommonReference> findAllByCode(String code);
-
     CommonReference findByTitle(String search);
 
 
@@ -25,7 +24,9 @@ public interface CommonReferenceService {
 
     CommonReferenceType findTypeByCode(String code);
     List<CommonReference> findParentIdById(Long id);
-    CommonReference findByTypeIdAndCode(String code, Long typeId);
+
+    CommonReference findByTypeIdAndCode(Long typeId, String code);
+
 
     List<CommonReference> findByParentIdAndType(Long parentId, Long typeId);
 }

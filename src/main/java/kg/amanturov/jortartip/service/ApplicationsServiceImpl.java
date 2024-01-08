@@ -3,6 +3,8 @@ package kg.amanturov.jortartip.service;
 import jakarta.transaction.Transactional;
 import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.model.Applications;
+import kg.amanturov.jortartip.model.CommonReference;
+import kg.amanturov.jortartip.model.CommonReferenceType;
 import kg.amanturov.jortartip.repository.ApplicationsRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     private final ViolationsService violationsService;
 
     private final CommonReferenceService commonReferenceService;
+
 
     public ApplicationsServiceImpl(ApplicationsRepository repository, UserService userService, ViolationsService violationsService, CommonReferenceService commonReferenceService) {
         this.repository = repository;
@@ -41,8 +44,8 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
 
 
     @Override
-    public Applications save(Applications application) {
-        return repository.save(application);
+    public ApplicationsDto save(ApplicationsDto applicationsDto) {
+        return convertEntityToDto(repository.save(convertDtoToEntity(applicationsDto)));
     }
     @Override
     public ApplicationsDto update(ApplicationsDto applicationsDto) {
@@ -54,6 +57,8 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
             applications.setLon(applicationsDto.getLon());
             applications.setPlace(applicationsDto.getPlace());
             applications.setId(applicationsDto.getId());
+            applications.setDateOfViolation(applicationsDto.getDateOfViolation());
+            applications.setNumberAuto(applicationsDto.getNumberAuto());
 
             if (applicationsDto.getStatus() != null) {
                 applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
@@ -75,6 +80,28 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     }
 
 
+    @Override
+    public void updateStatusAccept(Long id) {
+        Applications existingApplication = repository.findById(id).orElse(null);
+        CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
+        CommonReference reference = commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"2");
+        if (existingApplication != null) {
+            existingApplication.setStatus(reference);
+            repository.save(existingApplication);
+        }
+    }
+
+    @Override
+    public void updateStatusProtocol(Long id) {
+        Applications existingApplication = repository.findById(id).orElse(null);
+        CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
+        CommonReference reference = commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"3");
+        if (existingApplication != null) {
+            existingApplication.setStatus(reference);
+            repository.save(existingApplication);
+        }
+    }
+
 
     @Override
     public Applications findById(Long id) {
@@ -82,6 +109,15 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     }
 
 
+    @Override
+    public ApplicationsDto findApplicationById(Long id) {
+        Applications applications = repository.findById(id).orElse(null);
+        if (applications != null) {
+            return convertEntityToDto(applications);
+        } else {
+            return null;
+        }
+    }
 
 
     @Override
@@ -109,9 +145,12 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applicationsDto.setTitle(applications.getTypeViolations().getTitle());
         applicationsDto.setCreatedDate(applications.getCreatedDate());
         applicationsDto.setUpdateDate(applications.getUpdateDate());
+        applicationsDto.setDateOfViolation(applications.getDateOfViolation());
+        applicationsDto.setNumberAuto(applications.getNumberAuto());
 
         if(applications.getStatus() != null){
             applicationsDto.setStatus(applications.getStatus().getId());
+            applicationsDto.setStatusName(applications.getStatus().getTitle());
         }
         if(applications.getRegion() != null){
             applicationsDto.setRegionId(applications.getRegion().getId());
@@ -137,9 +176,10 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applications.setLat(applicationsDto.getLat());
         applications.setLon(applicationsDto.getLon());
         applications.setPlace(applicationsDto.getPlace());
-        if(applicationsDto.getStatus() != null){
-            applications.setStatus(commonReferenceService.findById(applicationsDto.getStatus()));
-        }
+        applications.setDateOfViolation(applicationsDto.getDateOfViolation());
+        applications.setNumberAuto(applicationsDto.getNumberAuto());
+        CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
+        applications.setStatus(commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"1"));
         if(applicationsDto.getRegionId() != null){
             applications.setRegion(commonReferenceService.findById(applicationsDto.getRegionId()));
         }

@@ -11,11 +11,15 @@ public interface ApplicationsService {
 
     List<Applications> findByStatusAndUserId(Long status, Long id);
 
-    Applications save(Applications application);
+    ApplicationsDto save(ApplicationsDto applicationsDto);
 
     ApplicationsDto update(ApplicationsDto applicationsDto);
+    void updateStatusAccept(Long id);
+    void updateStatusProtocol(Long id);
 
     Applications findById(Long id);
+
+    ApplicationsDto findApplicationById(Long id);
 
     ApplicationsDto convertEntityToDto(Applications applications);
 

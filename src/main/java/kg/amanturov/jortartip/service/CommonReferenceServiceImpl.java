@@ -34,6 +34,11 @@ public class CommonReferenceServiceImpl implements CommonReferenceService {
     }
 
     @Override
+    public CommonReference findByTypeIdAndCode( Long id, String code) {
+        return repository.findByTypeIdAndCode(id, code);
+    }
+
+    @Override
     public CommonReference findByTitle(String search) {
         return repository.findByTitle(search);
     }
@@ -76,10 +81,6 @@ public class CommonReferenceServiceImpl implements CommonReferenceService {
         return repository.findByParentId(id);
     }
 
-    @Override
-    public CommonReference findByTypeIdAndCode(String code, Long typeId) {
-        return repository.findByTypeIdAndCode(typeId,code);
-    }
 
     @Override
     public List<CommonReference> findByParentIdAndType(Long parentId, Long typeId) {

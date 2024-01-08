@@ -18,6 +18,8 @@ public class Applications {
 
     private String place;
 
+    private String numberAuto;
+
     private float lon;
 
     private float lat;
@@ -37,6 +39,10 @@ public class Applications {
     private CommonReference district;
 
     private Timestamp createdDate;
+
+    @Column(name = "date_of_violation")
+    private Timestamp dateOfViolation;
+
     @Column(name = "update_date")
     private Timestamp updateDate;
 
@@ -47,4 +53,9 @@ public class Applications {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "moder_id")
+    private User moder;
 }

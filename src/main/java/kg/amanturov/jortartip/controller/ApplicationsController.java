@@ -41,8 +41,7 @@ public class ApplicationsController {
 
     @PostMapping(value ="/create")
     public ApplicationsDto createApplication(@RequestBody ApplicationsDto applicationsDto) {
-        Applications createdApplication = applicationsService.convertDtoToEntity(applicationsDto);
-        return applicationsService.convertEntityToDto(applicationsService.save(createdApplication));
+        return applicationsService.save(applicationsDto);
     }
 
     @GetMapping(value ="/all")
@@ -51,9 +50,9 @@ public class ApplicationsController {
     }
 
     @GetMapping(value ="/{id}")
-    public Applications getApplicationById(
+    public ApplicationsDto getApplicationById(
             @PathVariable Long id) {
-        return applicationsService.findById(id);
+        return applicationsService.findApplicationById(id);
     }
 
     @PutMapping(value = "/update")
@@ -63,7 +62,14 @@ public class ApplicationsController {
         return applicationsService.update(applicationsDto);
     }
 
-
+    @PutMapping(value = "/update/status/accept/{id}")
+    public void updateStatusAccept(@PathVariable Long id) {
+        applicationsService.updateStatusAccept(id);
+    }
+    @PutMapping(value = "/update/status/protocol/{id}")
+    public void updateStatusProtocol(@PathVariable Long id) {
+        applicationsService.updateStatusProtocol(id);
+    }
     @DeleteMapping(value = "/delete/{id}")void delete(@PathVariable Long id)
     {applicationsService.deleteApplications(id);}
 
