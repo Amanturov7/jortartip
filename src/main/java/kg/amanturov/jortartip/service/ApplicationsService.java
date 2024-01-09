@@ -3,6 +3,8 @@ package kg.amanturov.jortartip.service;
 import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.model.Applications;
 import kg.amanturov.jortartip.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -21,6 +23,8 @@ public interface ApplicationsService {
 
     ApplicationsDto findApplicationById(Long id);
 
+    Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title, Pageable pageable);
+
     ApplicationsDto convertEntityToDto(Applications applications);
 
     void deleteApplications(Long id);
@@ -29,3 +33,4 @@ public interface ApplicationsService {
 
     Applications convertDtoToEntity(ApplicationsDto applicationsDto);
 }
+

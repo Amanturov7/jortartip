@@ -1,34 +1,57 @@
 package kg.amanturov.jortartip.service;
 
-import jakarta.transaction.Transactional;
+import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.model.Applications;
+import kg.amanturov.jortartip.model.Attachments;
 import kg.amanturov.jortartip.model.CommonReference;
 import kg.amanturov.jortartip.model.CommonReferenceType;
 import kg.amanturov.jortartip.repository.ApplicationsRepository;
+import kg.amanturov.jortartip.repository.AttachmentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ApplicationsServiceImpl  implements  ApplicationsService{
 
+
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final ApplicationsRepository repository;
     private final UserService userService;
     private final ViolationsService violationsService;
-
     private final CommonReferenceService commonReferenceService;
+    private final AttachmentRepository attachmentRepository;
 
 
-    public ApplicationsServiceImpl(ApplicationsRepository repository, UserService userService, ViolationsService violationsService, CommonReferenceService commonReferenceService) {
+    public ApplicationsServiceImpl(ApplicationsRepository repository , UserService userService, ViolationsService violationsService, CommonReferenceService commonReferenceService, AttachmentRepository attachmentRepository) {
         this.repository = repository;
         this.userService = userService;
         this.violationsService = violationsService;
         this.commonReferenceService = commonReferenceService;
+        this.attachmentRepository = attachmentRepository;
     }
 
 
@@ -121,17 +144,61 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
 
 
     @Override
-    public void deleteApplications(Long id){
-         repository.deleteById(id);
+    public void deleteApplications(Long id) {
+        Attachments attachment = attachmentRepository.findByApplicationsId(id);
+        try {
+            Files.delete(Paths.get(attachment.getPath()));
+            attachmentRepository.deleteById(attachment.getId());
+            repository.deleteById(id);
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting attachments: " + e.getMessage());
+        }
     }
+
     @Override
     public List<ApplicationsDto> findAll() {
-        List<Applications> applicationsList = repository.findAll();
+        List<Applications> applications = repository.findAll();
+        List<ApplicationsDto> applicationsDtos = new ArrayList<>();
+        for (Applications application : applications) {
+            applicationsDtos.add(convertEntityToDto(application));
+        }
+        return applicationsDtos;
+    }
 
-        return applicationsList.stream()
+    @Override
+    public Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title, Pageable pageable) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Applications> query = cb.createQuery(Applications.class);
+        Root<Applications> root = query.from(Applications.class);
+        Predicate predicate = cb.conjunction();
+
+        if (typeViolations != null) {
+            predicate = cb.and(predicate, cb.equal(root.get("typeViolations").get("id"), typeViolations));
+        }
+        if (StringUtils.isNotBlank(title)) {
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+        }
+        query.where(predicate);
+        query.select(root);
+
+        if (pageable.getSort().isSorted()) {
+            query.orderBy(QueryUtils.toOrders(pageable.getSort(), root, cb));
+        }
+
+        TypedQuery<Applications> typedQuery = entityManager.createQuery(query);
+        List<Applications> applications = typedQuery.getResultList();
+
+        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        typedQuery.setMaxResults(pageable.getPageSize());
+
+        List<Applications> paginatedApplications = typedQuery.getResultList();
+        List<ApplicationsDto> applicationsDtos = paginatedApplications.stream()
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(applicationsDtos, pageable, applications.size());
     }
+
 
 
     @Override

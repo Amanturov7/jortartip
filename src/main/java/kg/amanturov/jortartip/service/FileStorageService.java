@@ -25,13 +25,11 @@ public interface FileStorageService {
     AttachmentResponseDto saveAttachment(MultipartFile file, AttachmentRequestDto dto) throws IOException;
 
 
+    void deleteByApplicationsId(Long id);
+
     AttachmentResponseDto getAttachmentById(Long id);
 
-
-
-//    void updateAttachments(User user,Long id);
-//    List<AttachmentResponseDto> findByUserId(Long id);
-
+    void deleteAttachmentById(Long id);
 
     Resource convertFileFromPath(Attachments attachments) throws IOException;
 

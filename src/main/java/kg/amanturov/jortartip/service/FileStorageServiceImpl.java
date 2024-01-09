@@ -1,5 +1,6 @@
 package kg.amanturov.jortartip.service;
 
+import kg.amanturov.jortartip.Exceptions.MyFileNotFoundException;
 import kg.amanturov.jortartip.dto.AttachmentRequestDto;
 import kg.amanturov.jortartip.dto.AttachmentResponseDto;
 import kg.amanturov.jortartip.model.Attachments;
@@ -172,6 +173,22 @@ public class FileStorageServiceImpl implements FileStorageService {
         return responseDto;
     }
 
+@Override
+    public void deleteByApplicationsId(Long id) {
+        Attachments attachment = repository.findByApplicationsId(id);
+
+        if (attachment == null) {
+            throw new MyFileNotFoundException("Attachment not found for application ID: " + id);
+        }
+        try {
+            Files.delete(Paths.get(attachment.getPath()));
+            deleteAttachmentById(attachment.getId());
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting attachment file: " + e.getMessage());
+        }
+    }
+
+
     @Override
     public AttachmentResponseDto getAttachmentById(Long id) {
         Attachments attachment = repository.findById(id).orElse(null);
@@ -197,6 +214,11 @@ public class FileStorageServiceImpl implements FileStorageService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void deleteAttachmentById(Long id) {
+        repository.deleteById(id);
     }
 
     private Attachments convertDtoToEntity(AttachmentResponseDto responseDto) {

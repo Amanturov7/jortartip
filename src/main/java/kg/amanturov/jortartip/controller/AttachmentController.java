@@ -9,6 +9,7 @@ import kg.amanturov.jortartip.dto.AttachmentResponseDto;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
 import kg.amanturov.jortartip.service.FileStorageService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,18 @@ public class AttachmentController {
     }
 
 
-
+    @DeleteMapping("/delete/applications/{id}")
+    public ResponseEntity<String> deleteAttachmentByApplicationsId(@PathVariable Long id) {
+        try {
+            service.deleteByApplicationsId(id);
+            return ResponseEntity.ok("Attachment deleted successfully");
+        } catch (MyFileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting attachment: " + e.getMessage());
+        }
+    }
 
 
 
