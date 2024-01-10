@@ -19,6 +19,12 @@ public class Event {
 
     private String description;
 
+    private Float lat;
+
+    private Float lon;
+
+    private String address;
+
     private Timestamp startDate;
 
     private Timestamp endDate;
@@ -26,5 +32,9 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_event_id")
+    private CommonReference typeEvent;
 
 }
