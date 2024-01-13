@@ -14,9 +14,11 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
+    private final CommonReferenceService commonReferenceService;
 
-    public EventServiceImpl(EventRepository eventRepository) {
+    public EventServiceImpl(EventRepository eventRepository, CommonReferenceService commonReferenceService) {
         this.eventRepository = eventRepository;
+        this.commonReferenceService = commonReferenceService;
     }
 
     @Override
@@ -49,6 +51,13 @@ public class EventServiceImpl implements EventService {
         EventDto eventDto = new EventDto();
         eventDto.setId(event.getId());
         eventDto.setTitle(event.getTitle());
+        eventDto.setAddress(event.getAddress());
+        eventDto.setLat(event.getLat());
+        if (event.getTypeEvent() != null){
+            eventDto.setTypeEventId(event.getTypeEvent().getId());
+            eventDto.setTypeEventName(event.getTypeEvent().getTitle());
+        }
+        eventDto.setLon(event.getLon());
         eventDto.setDescription(event.getDescription());
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
         eventDto.setStartDate(timestamp);
@@ -60,6 +69,12 @@ public class EventServiceImpl implements EventService {
         Event event = new Event();
         event.setId(eventDto.getId());
         event.setTitle(eventDto.getTitle());
+        event.setAddress(eventDto.getAddress());
+        event.setLat(eventDto.getLat());
+        if(eventDto.getTypeEventId() != null) {
+            event.setTypeEvent(commonReferenceService.findById(eventDto.getTypeEventId()));
+        }
+        event.setLon(eventDto.getLon());
         event.setDescription(eventDto.getDescription());
         event.setStartDate(eventDto.getStartDate());
         event.setEndDate(eventDto.getEndDate());
