@@ -147,8 +147,10 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     public void deleteApplications(Long id) {
         Attachments attachment = attachmentRepository.findByApplicationsId(id);
         try {
-            Files.delete(Paths.get(attachment.getPath()));
-            attachmentRepository.deleteById(attachment.getId());
+            if (attachment != null){
+                Files.delete(Paths.get(attachment.getPath()));
+                attachmentRepository.deleteById(attachment.getId());
+            }
             repository.deleteById(id);
         } catch (IOException e) {
             throw new RuntimeException("Error deleting attachments: " + e.getMessage());

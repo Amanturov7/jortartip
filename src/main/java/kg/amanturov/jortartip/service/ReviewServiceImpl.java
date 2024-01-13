@@ -1,26 +1,44 @@
 package kg.amanturov.jortartip.service;
 
 
+import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import kg.amanturov.jortartip.dto.ReviewDto;
-import kg.amanturov.jortartip.dto.TicketsDto;
+import kg.amanturov.jortartip.model.Attachments;
 import kg.amanturov.jortartip.model.Review;
-import kg.amanturov.jortartip.model.Tickets;
+import kg.amanturov.jortartip.repository.AttachmentRepository;
 import kg.amanturov.jortartip.repository.ReviewRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
-
+    @PersistenceContext
+    private EntityManager entityManager;
     private final ReviewRepository repository;
     private final UserService userService;
+    private final AttachmentRepository attachmentRepository;
     private final CommonReferenceService commonReferenceService;
 
-    public ReviewServiceImpl(ReviewRepository repository, UserService userService, CommonReferenceService commonReferenceService) {
+    public ReviewServiceImpl(ReviewRepository repository, UserService userService, AttachmentRepository attachmentRepository, CommonReferenceService commonReferenceService) {
         this.repository = repository;
         this.userService = userService;
+        this.attachmentRepository = attachmentRepository;
         this.commonReferenceService = commonReferenceService;
     }
 
@@ -30,6 +48,44 @@ public class ReviewServiceImpl implements ReviewService {
         return reviews.stream()
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ReviewDto> findAllReviewsByFilters(String ecologicFactors, String roadSign, String lights, Pageable pageable) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Review> query = cb.createQuery(Review.class);
+        Root<Review> root = query.from(Review.class);
+        Predicate predicate = cb.conjunction();
+
+        if (StringUtils.isNotBlank(ecologicFactors)) {
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("ecologicFactors")), "%" + ecologicFactors.toLowerCase() + "%"));
+        }
+        if (StringUtils.isNotBlank(roadSign)) {
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("roadSign")), "%" + roadSign.toLowerCase() + "%"));
+        }
+        if (StringUtils.isNotBlank(lights)) {
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("lights")), "%" + lights.toLowerCase() + "%"));
+        }
+
+        query.where(predicate);
+        query.select(root);
+
+        if (pageable.getSort().isSorted()) {
+            query.orderBy(QueryUtils.toOrders(pageable.getSort(), root, cb));
+        }
+
+        TypedQuery<Review> typedQuery = entityManager.createQuery(query);
+        List<Review> reviews = typedQuery.getResultList();
+
+        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        typedQuery.setMaxResults(pageable.getPageSize());
+
+        List<Review> paginatedReviews = typedQuery.getResultList();
+        List<ReviewDto> reviewDtos = paginatedReviews.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(reviewDtos, pageable, reviews.size());
     }
 
     @Override
@@ -56,7 +112,21 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void delete(Long id) {
-        repository.deleteById(id);
+
+    }
+
+    @Override
+    public void deleteReviews(Long id) {
+        Attachments attachment = attachmentRepository.findByReviewsId(id);
+        try {
+            if (attachment != null){
+                Files.delete(Paths.get(attachment.getPath()));
+                attachmentRepository.deleteById(attachment.getId());
+            }
+            repository.deleteById(id);
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting attachments: " + e.getMessage());
+        }
     }
 
     private Review convertDtoToEntity(ReviewDto reviewDto) {
