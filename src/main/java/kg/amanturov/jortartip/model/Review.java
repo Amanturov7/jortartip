@@ -39,4 +39,8 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ecologic_factor_id")
     private CommonReference ecologicFactors;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_id")
+    private CommonReference status;
 }

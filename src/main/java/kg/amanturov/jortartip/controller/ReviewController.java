@@ -2,6 +2,7 @@ package kg.amanturov.jortartip.controller;
 
 
 import kg.amanturov.jortartip.Exceptions.MyFileNotFoundException;
+import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.ReviewDto;
 import kg.amanturov.jortartip.model.Review;
 import kg.amanturov.jortartip.service.ReviewService;
@@ -25,6 +26,12 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+
+    @GetMapping(value = "/points")
+    public ResponseEntity<List<ReviewDto>> getAllReviewsPoints() {
+        List<ReviewDto> reviews = reviewService.findAll();
+        return ResponseEntity.ok(reviews);
+    }
     @GetMapping("/all")
     public ResponseEntity<Page<ReviewDto>> getFilteredReviews(
             @RequestParam(name = "ecologicFactorsId", required = false) String ecologicFactors,
@@ -44,19 +51,10 @@ public class ReviewController {
     }
 
 
-    @GetMapping(value = "/alll")
-    public ResponseEntity<List<ReviewDto>> getAllReviews() {
-        List<ReviewDto> reviews = reviewService.findAll();
-        return ResponseEntity.ok(reviews);
-    }
     @GetMapping(value ="/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
-        Review review = reviewService.findById(id);
-        if (review != null) {
-            return ResponseEntity.ok(review);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ReviewDto getApplicationById(
+            @PathVariable Long id) {
+        return reviewService.findReviewById(id);
     }
 
     @PostMapping(value = "/create")
@@ -64,6 +62,18 @@ public class ReviewController {
         Review createdReview = reviewService.save(reviewDto);
         return ResponseEntity.ok(createdReview);
     }
+
+
+    @PutMapping(value = "/update/status/accept/{id}")
+    public void updateStatusAccept(@PathVariable Long id) {
+        reviewService.updateStatusAccept(id);
+    }
+    @PutMapping(value = "/update/status/protocol/{id}")
+    public void updateStatusProtocol(@PathVariable Long id) {
+        reviewService.updateStatusProtocol(id);
+    }
+
+
 
     @PutMapping(value ="/update/{id}")
     public ResponseEntity<Review> updateReview(

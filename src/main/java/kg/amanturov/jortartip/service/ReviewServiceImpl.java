@@ -10,8 +10,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import kg.amanturov.jortartip.dto.ReviewDto;
-import kg.amanturov.jortartip.model.Attachments;
-import kg.amanturov.jortartip.model.Review;
+import kg.amanturov.jortartip.model.*;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
 import kg.amanturov.jortartip.repository.ReviewRepository;
 import org.springframework.data.domain.Page;
@@ -49,6 +48,40 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public ReviewDto findReviewById(Long id) {
+        Review review = repository.findById(id).orElse(null);
+        if (review != null) {
+            return convertEntityToDto(review);
+        } else {
+            return null;
+        }
+    }
+
+
+    @Override
+    public void updateStatusAccept(Long id) {
+        Review existingReview = repository.findById(id).orElse(null);
+        CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
+        CommonReference reference = commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"2");
+        if (existingReview != null) {
+            existingReview.setStatus(reference);
+            repository.save(existingReview);
+        }
+    }
+
+    @Override
+    public void updateStatusProtocol(Long id) {
+        Review existingReview = repository.findById(id).orElse(null);
+        CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
+        CommonReference reference = commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"3");
+        if (existingReview != null) {
+            existingReview.setStatus(reference);
+            repository.save(existingReview);
+        }
+    }
+
 
     @Override
     public Page<ReviewDto> findAllReviewsByFilters(String ecologicFactors, String roadSign, String lights, Pageable pageable) {
@@ -136,6 +169,8 @@ public class ReviewServiceImpl implements ReviewService {
         review.setLon(reviewDto.getLon());
         review.setLocationAddress(reviewDto.getLocationAddress());
         review.setDescription(reviewDto.getDescription());
+        CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
+        review.setStatus(commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"1"));
         if (reviewDto.getRoadId() != null){
             review.setRoads(commonReferenceService.findById(reviewDto.getRoadId()));
         }
@@ -148,6 +183,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (reviewDto.getEcologicFactorsId() != null){
         review.setEcologicFactors(commonReferenceService.findById(reviewDto.getEcologicFactorsId()));
         }
+
         review.setUser(userService.findById(reviewDto.getUserId()));
 
         return review;
@@ -171,6 +207,10 @@ public class ReviewServiceImpl implements ReviewService {
         }
         if (review.getRoadSign() != null) {
             reviewDto.setRoadSignId(review.getRoadSign().getId());
+        }
+        if(review.getStatus() != null){
+            reviewDto.setStatusId(review.getStatus().getId());
+            reviewDto.setStatusName(review.getStatus().getTitle());
         }
         if (review.getEcologicFactors() != null) {
             reviewDto.setEcologicFactorsId(review.getEcologicFactors().getId());

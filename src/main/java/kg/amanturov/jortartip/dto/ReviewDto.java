@@ -11,6 +11,8 @@ public class ReviewDto {
     private String description;
     private Long userId;
     private Long roadId;
+    private Long statusId;
+    private String statusName;
     private Long lightId;
     private Long roadSignId;
     private Long ecologicFactorsId;

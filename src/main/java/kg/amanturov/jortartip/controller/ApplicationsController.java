@@ -30,6 +30,11 @@ public class ApplicationsController {
         this.applicationsService = applicationsService;
     }
 
+    @GetMapping(value ="/points")
+    public List<ApplicationsDto> getAllApplications() {
+        return applicationsService.findAll();
+    }
+
     @GetMapping(value ="/user/{userId}")
     public List<ApplicationsDto> getApplicationsByUser(@PathVariable Long userId) {
         List<Applications> applicationsList = applicationsService.findByUser(userId);

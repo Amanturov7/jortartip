@@ -11,6 +11,12 @@ import java.util.List;
 public interface ReviewService {
     List<ReviewDto> findAll();
 
+    ReviewDto findReviewById(Long id);
+
+    void updateStatusAccept(Long id);
+
+    void updateStatusProtocol(Long id);
+
     Page<ReviewDto> findAllReviewsByFilters(String ecologicFactors, String roadSign, String lights, Pageable pageable);
 
     Review findById(Long id);
