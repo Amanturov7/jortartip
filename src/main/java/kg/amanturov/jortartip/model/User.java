@@ -3,7 +3,9 @@ package kg.amanturov.jortartip.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.relational.core.sql.In;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 
 @Entity
@@ -25,7 +27,7 @@ public class User {
 
     private Timestamp signupDate;
 
-    private Integer inn;
+    private BigInteger inn;
 
     private String email;
 

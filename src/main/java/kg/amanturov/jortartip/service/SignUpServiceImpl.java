@@ -46,11 +46,9 @@ public class SignUpServiceImpl implements SignUpService {
     }
     private User mapSignUpRequestToUser(EmployeeSIgnUpDto signUpRequest) {
         User user = new User();
+
         user.setUsername(signUpRequest.getLogin());
-//        if(signUpRequest.getOrganizationId() != null) {
-//            user.setOrganization(organizationService.findById(signUpRequest.getOrganizationId()));
-//        }
-//        user.setWaterUser(waterUsersService.findById(signUpRequest.getWaterUserId()));
+        user.setInn(signUpRequest.getInn());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setRole(WebSecurityConfig.USER);
         return user;

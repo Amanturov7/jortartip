@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigInteger;
+
 @Data
 public class EmployeeSIgnUpDto {
 
@@ -18,11 +20,7 @@ public class EmployeeSIgnUpDto {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).*$", message = "Password must contain at least one letter and one digit")
     private String password;
 
-//    private String pin;
-//    private String inn;
+    private BigInteger inn;
     private String email;
-//    private String positionEnum;
-//    private Long organizationId;
-//    private Boolean isOrganization;
 
 }
