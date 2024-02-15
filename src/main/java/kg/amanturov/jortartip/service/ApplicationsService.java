@@ -25,6 +25,8 @@ public interface ApplicationsService {
 
     Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title, Pageable pageable);
 
+    List<ApplicationsDto> findLatest4Applications();
+
     ApplicationsDto convertEntityToDto(Applications applications);
 
     void deleteApplications(Long id);

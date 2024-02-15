@@ -1,6 +1,7 @@
 package kg.amanturov.jortartip.service;
 
 
+import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.ReviewDto;
 import kg.amanturov.jortartip.model.Review;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,8 @@ import java.util.List;
 
 public interface ReviewService {
     List<ReviewDto> findAll();
+
+    List<ReviewDto> findLatest4Reviews();
 
     ReviewDto findReviewById(Long id);
 

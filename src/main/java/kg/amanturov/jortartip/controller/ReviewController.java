@@ -32,6 +32,13 @@ public class ReviewController {
         List<ReviewDto> reviews = reviewService.findAll();
         return ResponseEntity.ok(reviews);
     }
+
+
+    @GetMapping("/latest")
+    public List<ReviewDto> getLatest4Rewiews() {
+        return reviewService.findLatest4Reviews();
+    }
+
     @GetMapping("/all")
     public ResponseEntity<Page<ReviewDto>> getFilteredReviews(
             @RequestParam(name = "ecologicFactorsId", required = false) String ecologicFactors,

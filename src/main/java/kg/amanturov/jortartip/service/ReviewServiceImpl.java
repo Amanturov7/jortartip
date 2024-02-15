@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.ReviewDto;
 import kg.amanturov.jortartip.model.*;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
@@ -48,6 +49,14 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ReviewDto> findLatest4Reviews() {
+        return repository.findTop4ByOrderByCreatedDateDesc().stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public ReviewDto findReviewById(Long id) {

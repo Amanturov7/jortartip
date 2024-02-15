@@ -202,6 +202,14 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     }
 
 
+    @Override
+    public List<ApplicationsDto> findLatest4Applications() {
+        return repository.findTop4ByOrderByCreatedDateDesc().stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     public ApplicationsDto convertEntityToDto(Applications applications) {

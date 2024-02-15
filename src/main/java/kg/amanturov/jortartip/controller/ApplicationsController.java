@@ -81,6 +81,12 @@ public class ApplicationsController {
         return applicationsService.findApplicationById(id);
     }
 
+
+    @GetMapping("/latest")
+    public List<ApplicationsDto> getLatest4Applications() {
+        return applicationsService.findLatest4Applications();
+    }
+
     @PutMapping(value = "/update")
     public ApplicationsDto updateApplication(
             @RequestBody ApplicationsDto applicationsDto

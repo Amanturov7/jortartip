@@ -3,6 +3,8 @@ package kg.amanturov.jortartip.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Entity
 @Data
 @Table(name = "reviews")
@@ -16,6 +18,14 @@ public class Review {
     private Float lon;
 
     private String locationAddress;
+
+
+    private Timestamp createdDate;
+
+    @Column(name = "update_date")
+    private Timestamp updateDate;
+
+
 
     @Column(columnDefinition = "TEXT")
     private String Description;
