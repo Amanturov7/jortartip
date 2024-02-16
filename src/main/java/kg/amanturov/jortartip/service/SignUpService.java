@@ -6,7 +6,8 @@ import kg.amanturov.jortartip.dto.securityDto.LoginResponse;
 import java.util.List;
 
 public interface SignUpService {
-    void saveEmployee(List<EmployeeSIgnUpDto> dtos);
+
+    void saveEmployee(EmployeeSIgnUpDto dtos);
 
     LoginResponse findByUserName(String userName);
 }

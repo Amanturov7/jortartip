@@ -56,7 +56,7 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    public void signUp(@RequestBody @Valid List<EmployeeSIgnUpDto> employeeSIgnUpDtos) {
+    public void signUp(@RequestBody @Valid EmployeeSIgnUpDto employeeSIgnUpDtos) {
         signUpService.saveEmployee(employeeSIgnUpDtos);
     }
 

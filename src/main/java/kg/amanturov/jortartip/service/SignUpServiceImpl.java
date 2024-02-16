@@ -9,8 +9,6 @@ import kg.amanturov.jortartip.security.WebSecurityConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class SignUpServiceImpl implements SignUpService {
 
@@ -26,15 +24,13 @@ public class SignUpServiceImpl implements SignUpService {
     }
 
     @Override
-    public void saveEmployee(List<EmployeeSIgnUpDto> dtos) {
-        dtos.forEach(employeeDto -> {
+    public void saveEmployee(EmployeeSIgnUpDto dtos) {
             try {
-                validateEmployeeDto(employeeDto);
-                userService.saveUser(mapSignUpRequestToUser(employeeDto));
+                validateEmployeeDto(dtos);
+                userService.saveUser(mapSignUpRequestToUser(dtos));
             } catch (DuplicatedUserInfoException e) {
                 throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
             }
-        });
     }
 
 

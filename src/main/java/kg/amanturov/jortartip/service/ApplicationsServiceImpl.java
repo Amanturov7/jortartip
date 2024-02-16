@@ -178,7 +178,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
             predicate = cb.and(predicate, cb.equal(root.get("typeViolations").get("id"), typeViolations));
         }
         if (StringUtils.isNotBlank(title)) {
-            predicate = cb.and(predicate, cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("description")), "%" + title.toLowerCase() + "%"));
         }
         query.where(predicate);
         query.select(root);

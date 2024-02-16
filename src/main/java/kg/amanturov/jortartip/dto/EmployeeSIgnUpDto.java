@@ -11,7 +11,6 @@ import java.math.BigInteger;
 @Data
 public class EmployeeSIgnUpDto {
 
-
     @NotBlank(message = "Login cannot be blank")
     private String login;
 
