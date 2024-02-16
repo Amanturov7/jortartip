@@ -3,6 +3,7 @@ package kg.amanturov.jortartip.service;
 
 import kg.amanturov.jortartip.Exceptions.DuplicatedUserInfoException;
 import kg.amanturov.jortartip.dto.EmployeeSIgnUpDto;
+import kg.amanturov.jortartip.dto.securityDto.LoginResponse;
 import kg.amanturov.jortartip.model.User;
 import kg.amanturov.jortartip.security.WebSecurityConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +35,16 @@ public class SignUpServiceImpl implements SignUpService {
                 throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
             }
         });
+    }
+
+
+
+    @Override
+    public LoginResponse findByUserName(String userName) {
+        LoginResponse loginResponse = new LoginResponse();
+        User user = userService.getUserByUsername(userName).get();
+        loginResponse.setUserName(user.getUsername());
+        return loginResponse;
     }
 
     private void validateEmployeeDto(EmployeeSIgnUpDto dto) {

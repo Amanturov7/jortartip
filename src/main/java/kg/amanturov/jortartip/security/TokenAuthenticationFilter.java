@@ -1,12 +1,18 @@
 package kg.amanturov.jortartip.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kg.amanturov.jortartip.Exceptions.UserNotFoundException;
+import kg.amanturov.jortartip.model.User;
+import kg.amanturov.jortartip.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,33 +32,64 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
 
+    private final RefresherTokenService refresherTokenService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException, ServletException {
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
+        String username = null;
         try {
-            getJwtFromRequest(request)
-                    .flatMap(tokenProvider::validateTokenAndGetJws)
-                    .ifPresent(jws -> {
-                        String username = jws.getBody().getSubject();
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    });
-        } catch (Exception e) {
-            log.error("Cannot set user authentication", e);
+            if(authHeader != null && authHeader.startsWith("Bearer ")){
+                token = extractJwtFromRequest(request);
+                username = tokenProvider.extractUsername(token);
+            }
+
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if(tokenProvider.validateToken(token, userDetails)){
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
+                else {
+                    throw new RuntimeException("Токен просрочен");
+                }
+
+            }
         }
+        catch (ExpiredJwtException ex) {
+            String isRefreshToken = request.getHeader("isRefreshToken");
+            String requestURL = request.getRequestURL().toString();
+            if (isRefreshToken != null && isRefreshToken.equals("true") && requestURL.contains("refreshtoken")) {
+                chain.doFilter(request, response);
+            }
+            else {
+                response.setStatus(403);
+                response.getWriter().write(ex.getMessage());
+                return;
+            }
+        } catch (BadCredentialsException ex) {
+            request.setAttribute("ошибка входа", ex);
+        }
+
         chain.doFilter(request, response);
     }
 
-    private Optional<String> getJwtFromRequest(HttpServletRequest request) {
-        String tokenHeader = request.getHeader(TOKEN_HEADER);
-        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(TOKEN_PREFIX)) {
-            return Optional.of(tokenHeader.replace(TOKEN_PREFIX, ""));
-        }
-        return Optional.empty();
+
+    private void allowForRefreshToken(ExpiredJwtException ex, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                null, null, null);
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        request.setAttribute("claims", ex.getClaims());
+
     }
 
-    public static final String TOKEN_HEADER = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7, bearerToken.length());
+        }
+        return null;
+    }
 
 }
