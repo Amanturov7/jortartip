@@ -20,7 +20,7 @@ public interface ReviewService {
 
     void updateStatusProtocol(Long id);
 
-    Page<ReviewDto> findAllReviewsByFilters(String ecologicFactors, String roadSign, String lights, Pageable pageable);
+    Page<ReviewDto> findAllReviewsByFilters(Long ecologicFactors, Long roadSign,Long roads, Long lights, Pageable pageable);
 
     Review findById(Long id);
 

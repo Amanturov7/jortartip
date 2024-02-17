@@ -41,9 +41,10 @@ public class ReviewController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<ReviewDto>> getFilteredReviews(
-            @RequestParam(name = "ecologicFactorsId", required = false) String ecologicFactors,
-            @RequestParam(name = "roadSignId", required = false) String roadSign,
-            @RequestParam(name = "lightsId", required = false) String lights,
+            @RequestParam(name = "ecologicFactorId", required = false) Long ecologicFactorsId,
+            @RequestParam(name = "roadSignId", required = false) Long roadSignId,
+            @RequestParam(name = "roadId", required = false) Long roadsId,
+            @RequestParam(name = "lightId", required = false) Long lightsId,
             @RequestParam(name = "sort", defaultValue = "asc") String sortOrder,
             @RequestParam(name = "page", defaultValue = "1") int page,
             Pageable pageable
@@ -53,7 +54,7 @@ public class ReviewController {
             sort = sort.descending();
         }
         pageable = PageRequest.of(page - 1, pageable.getPageSize(), sort);
-        Page<ReviewDto> reviewDtoPage = reviewService.findAllReviewsByFilters(ecologicFactors, roadSign, lights, pageable);
+        Page<ReviewDto> reviewDtoPage = reviewService.findAllReviewsByFilters(ecologicFactorsId, roadSignId, roadsId,lightsId, pageable);
         return new ResponseEntity<>(reviewDtoPage, HttpStatus.OK);
     }
 

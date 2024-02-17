@@ -93,22 +93,24 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public Page<ReviewDto> findAllReviewsByFilters(String ecologicFactors, String roadSign, String lights, Pageable pageable) {
+    public Page<ReviewDto> findAllReviewsByFilters(Long ecologicFactorsId, Long roadSignId, Long roadsId, Long lightsId, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Review> query = cb.createQuery(Review.class);
         Root<Review> root = query.from(Review.class);
         Predicate predicate = cb.conjunction();
 
-        if (StringUtils.isNotBlank(ecologicFactors)) {
-            predicate = cb.and(predicate, cb.like(cb.lower(root.get("ecologicFactors")), "%" + ecologicFactors.toLowerCase() + "%"));
+        if (ecologicFactorsId != null) {
+            predicate = cb.and(predicate, cb.equal(root.get("ecologicFactors").get("id"), ecologicFactorsId));
         }
-        if (StringUtils.isNotBlank(roadSign)) {
-            predicate = cb.and(predicate, cb.like(cb.lower(root.get("roadSign")), "%" + roadSign.toLowerCase() + "%"));
+        if (roadSignId != null) {
+            predicate = cb.and(predicate, cb.equal(root.get("roadSign").get("id"), roadSignId));
         }
-        if (StringUtils.isNotBlank(lights)) {
-            predicate = cb.and(predicate, cb.like(cb.lower(root.get("lights")), "%" + lights.toLowerCase() + "%"));
+        if (roadsId != null) {
+            predicate = cb.and(predicate, cb.equal(root.get("roads").get("id"), roadsId));
         }
-
+        if (lightsId != null) {
+            predicate = cb.and(predicate, cb.equal(root.get("lights").get("id"), lightsId));
+        }
         query.where(predicate);
         query.select(root);
 
@@ -117,8 +119,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         TypedQuery<Review> typedQuery = entityManager.createQuery(query);
-        List<Review> reviews = typedQuery.getResultList();
 
+        // Установка пагинации
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         typedQuery.setMaxResults(pageable.getPageSize());
 
@@ -127,8 +129,14 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(reviewDtos, pageable, reviews.size());
+        // Получение общего количества записей для пагинации
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        countQuery.select(cb.count(countQuery.from(Review.class)));
+        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(reviewDtos, pageable, totalCount);
     }
+
 
     @Override
     public Review findById(Long id) {
