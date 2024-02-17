@@ -23,7 +23,7 @@ public interface ApplicationsService {
 
     ApplicationsDto findApplicationById(Long id);
 
-    Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title, Pageable pageable);
+    Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title,Long id,String numberAuto, Pageable pageable);
 
     List<ApplicationsDto> findLatest4Applications();
 

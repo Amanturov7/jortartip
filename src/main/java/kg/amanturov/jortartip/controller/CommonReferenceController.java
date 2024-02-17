@@ -28,6 +28,10 @@ public class CommonReferenceController {
         return commonReferenceService.findAllByType(typeCode);
     }
 
+    @GetMapping(value = "/parent/{id}")
+    public List<CommonReference> findByParentId(@PathVariable Long id){
+        return commonReferenceService.findParentIdById(id);
+    }
     @GetMapping(value = "/{district}")
     public List<CommonReference> findById(@PathVariable String district) {
         return commonReferenceService.findAllByCode(district);

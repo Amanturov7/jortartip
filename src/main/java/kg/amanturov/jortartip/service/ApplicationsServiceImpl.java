@@ -168,7 +168,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     }
 
     @Override
-    public Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title, Pageable pageable) {
+    public Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title,Long id,String numberAuto, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Applications> query = cb.createQuery(Applications.class);
         Root<Applications> root = query.from(Applications.class);
@@ -179,6 +179,12 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         }
         if (StringUtils.isNotBlank(title)) {
             predicate = cb.and(predicate, cb.like(cb.lower(root.get("description")), "%" + title.toLowerCase() + "%"));
+        }
+        if (StringUtils.isNotBlank(numberAuto)) {
+            predicate = cb.and(predicate, cb.like(cb.lower(root.get("numberAuto")), "%" + numberAuto.toLowerCase() + "%"));
+        }
+        if (id != null) {
+            predicate = cb.and(predicate, cb.equal(root.get("id"), id));
         }
         query.where(predicate);
         query.select(root);

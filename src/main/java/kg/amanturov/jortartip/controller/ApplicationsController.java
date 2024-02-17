@@ -63,6 +63,8 @@ public class ApplicationsController {
     public ResponseEntity<Page<ApplicationsDto>> getFilteredApplications(
             @RequestParam(name = "typeViolations", required = false) Long typeViolations,
             @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "id", required = false) Long id,
+            @RequestParam(name = "numberAuto", required = false) String numberAuto,
             @RequestParam(name = "sort", defaultValue = "asc") String sortOrder,
             @RequestParam(name = "page", defaultValue = "1") int page,
             Pageable pageable
@@ -72,7 +74,7 @@ public class ApplicationsController {
             sort = sort.descending();
         }
         pageable = PageRequest.of(page - 1, pageable.getPageSize(), sort);
-        Page<ApplicationsDto> applicationsDtoPage = applicationsService.findAllApplicationsByFilters(typeViolations, title, pageable);
+        Page<ApplicationsDto> applicationsDtoPage = applicationsService.findAllApplicationsByFilters(typeViolations, title, id, numberAuto, pageable);
         return new ResponseEntity<>(applicationsDtoPage, HttpStatus.OK);
     }
     @GetMapping(value ="/{id}")
