@@ -23,6 +23,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -155,6 +159,9 @@ public class ReviewServiceImpl implements ReviewService {
         if (existingReview != null) {
             Review updatedReview = convertDtoToEntity(reviewDto);
             updatedReview.setId(existingReview.getId());
+            Date currentDate = new Date();
+            updatedReview.setUpdateDate(new Timestamp(currentDate.getTime()));
+
             return repository.save(updatedReview);
         }
         return null;
@@ -186,6 +193,10 @@ public class ReviewServiceImpl implements ReviewService {
         review.setLon(reviewDto.getLon());
         review.setLocationAddress(reviewDto.getLocationAddress());
         review.setDescription(reviewDto.getDescription());
+
+        Date currentDate = new Date();
+        review.setCreatedDate(new Timestamp(currentDate.getTime()));
+
         CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
         review.setStatus(commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"1"));
         if (reviewDto.getRoadId() != null){
@@ -212,6 +223,9 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDto.setId(review.getId());
         reviewDto.setLon(review.getLon());
         reviewDto.setLocationAddress(review.getLocationAddress());
+        reviewDto.setCreatedDate(review.getCreatedDate());
+        reviewDto.setUpdatedDate(review.getUpdateDate());
+
         reviewDto.setDescription(review.getDescription());
         if (review.getUser() != null) {
             reviewDto.setUserId(review.getUser().getId());

@@ -28,6 +28,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -271,9 +272,8 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         }
         applications.setTitle(violationsService.findById(applicationsDto.getTypeViolationsId()).getTitle());
 
-        LocalDate currentDate = LocalDate.now();
-        Timestamp timestamp = Timestamp.valueOf(currentDate.atStartOfDay());
-        applications.setCreatedDate(timestamp);
+        Date currentDate = new Date();
+        applications.setCreatedDate(new Timestamp(currentDate.getTime()));
 
         applications.setUpdateDate(applicationsDto.getUpdateDate());
 
