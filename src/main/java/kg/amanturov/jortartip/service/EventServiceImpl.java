@@ -15,10 +15,13 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final CommonReferenceService commonReferenceService;
+    private final UserService userService;
 
-    public EventServiceImpl(EventRepository eventRepository, CommonReferenceService commonReferenceService) {
+
+    public EventServiceImpl(EventRepository eventRepository, CommonReferenceService commonReferenceService, UserService userService) {
         this.eventRepository = eventRepository;
         this.commonReferenceService = commonReferenceService;
+        this.userService = userService;
     }
 
     @Override
@@ -62,13 +65,14 @@ public class EventServiceImpl implements EventService {
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
         eventDto.setStartDate(timestamp);
         eventDto.setEndDate(event.getEndDate());
+        eventDto.setUserId(event.getUser().getId());
         return eventDto;
     }
 
     private Event convertToEntity(EventDto eventDto) {
         Event event = new Event();
         event.setId(eventDto.getId());
-        event.setTitle(eventDto.getTitle());
+        event.setTitle(commonReferenceService.findById(eventDto.getTypeEventId()).getTitle());
         event.setAddress(eventDto.getAddress());
         event.setLat(eventDto.getLat());
         if(eventDto.getTypeEventId() != null) {
@@ -78,6 +82,7 @@ public class EventServiceImpl implements EventService {
         event.setDescription(eventDto.getDescription());
         event.setStartDate(eventDto.getStartDate());
         event.setEndDate(eventDto.getEndDate());
+        event.setUser(userService.findById(eventDto.getUserId()));
         return event;
     }
 }

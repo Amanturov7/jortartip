@@ -17,5 +17,6 @@ public class EventDto {
     private String typeEventName;
     private Timestamp startDate;
     private Timestamp endDate;
+    private Long userId;
 
 }
