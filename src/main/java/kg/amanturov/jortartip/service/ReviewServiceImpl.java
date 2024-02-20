@@ -232,12 +232,16 @@ public class ReviewServiceImpl implements ReviewService {
         }
         if (review.getRoads() != null) {
             reviewDto.setRoadId(review.getRoads().getId());
+            reviewDto.setRoadName(review.getRoads().getTitle());
+
         }
         if (review.getLights() != null) {
             reviewDto.setLightId(review.getLights().getId());
+            reviewDto.setLightName(review.getLights().getTitle());
         }
         if (review.getRoadSign() != null) {
             reviewDto.setRoadSignId(review.getRoadSign().getId());
+            reviewDto.setRoadSignName(review.getRoadSign().getTitle());
         }
         if(review.getStatus() != null){
             reviewDto.setStatusId(review.getStatus().getId());
@@ -245,7 +249,12 @@ public class ReviewServiceImpl implements ReviewService {
         }
         if (review.getEcologicFactors() != null) {
             reviewDto.setEcologicFactorsId(review.getEcologicFactors().getId());
+            reviewDto.setEcologicFactorsName(review.getEcologicFactors().getTitle());
         }
+
+
+        reviewDto.setAttachmentId(attachmentRepository.findByReviewsId(review.getId()).getId());
+
         return reviewDto;
     }
 

@@ -17,8 +17,14 @@ public class ReviewDto {
     private Long userId;
     private Long roadId;
     private Long statusId;
-    private String statusName;
     private Long lightId;
     private Long roadSignId;
     private Long ecologicFactorsId;
+    private Long attachmentId;
+
+    private String statusName;
+    private String lightName;
+    private String roadSignName;
+    private String ecologicFactorsName;
+    private String roadName;
 }
