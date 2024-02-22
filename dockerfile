@@ -1,17 +1,11 @@
-# Используем официальный образ OpenJDK 17
-FROM adoptopenjdk/openjdk17:alpine-slim
-
-# Устанавливаем рабочую директорию в контейнере
-WORKDIR /app
-
-# Копируем pom.xml в контейнер
-COPY pom.xml .
-
-# Копируем исходный код приложения в контейнер
+FROM maven:3.6.3-openjdk-17 AS build
+WORKDIR /build
 COPY src ./src
+COPY pom.xml ./
+RUN mvn clean package -e -DskipTests
 
-# Собираем приложение с помощью Maven
-RUN ./mvnw package -DskipTests
 
-# Запускаем приложение при старте контейнера
-CMD ["java", "-jar", "target/joltartip.jar"]
+FROM openjdk:17-jdk AS app
+WORKDIR /app
+COPY --from=build /build/target/jortartip-0.0.1-SNAPSHOT*jar joltartip.jar
+CMD ["java", "-jar", "joltartip.jar"]
