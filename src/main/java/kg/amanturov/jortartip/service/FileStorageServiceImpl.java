@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -108,6 +109,27 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
     }
 
+    @Override
+    public AttachmentResponseDto findByUserId(Long id) {
+        return null;
+    }
+
+    @Override
+    public AttachmentResponseDto findByUserIdAndType(Long id) {
+        Attachments Attachment = repository.findByUserIdAndType(id, "avatar");
+
+        if (Attachment != null) {
+            AttachmentResponseDto responseDto = mapToAttachmentResponseDto(Attachment);
+            String sanitizedFileName = responseDto.getName();
+            sanitizedFileName = sanitizedFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+            responseDto.setDownloadUrl("http://localhost:8080/rest/attachment/download/" + responseDto.getAttachmentId());
+            responseDto.setName(sanitizedFileName);
+            return responseDto;
+        } else {
+            return null;
+        }
+    }
+
 
 
     @Override
@@ -139,7 +161,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setExtension(extension);
         responseDto.setName(fileName);
         responseDto.setAppicationsId(dto.getApplicationsId());
-        responseDto.setUserId(dto.getUserId());
+        responseDto.setUserId(dto.getUserProfileId());
         responseDto.setTicketsId(dto.getTicketsId());
         responseDto.setReviewsId(dto.getReviewsId());
         responseDto.setDescription(dto.getDescription());
@@ -215,6 +237,60 @@ public class FileStorageServiceImpl implements FileStorageService {
             return null;
         }
     }
+
+
+    @Override
+    public void saveAvatar(MultipartFile file, Long userId) {
+        try {
+            String avatarDirectory = photoDirectory;
+
+            String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+            if (!extension.toLowerCase().matches("jpg|jpeg|png")) {
+                throw new IllegalArgumentException("Недопустимый формат файла для аватарки: " + extension);
+            }
+
+            String fileName = "avatar_" + userId + "." + extension;
+
+            Path targetLocation = Paths.get(avatarDirectory + fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            Attachments attachment = new Attachments();
+            attachment.setName(fileName);
+            attachment.setPath(avatarDirectory + fileName);
+            attachment.setType("avatar");
+            attachment.setUser(userService.findById(userId));
+            attachment.setDescription("User Avatar");
+            repository.save(attachment);
+        } catch (IOException ex) {
+            throw new RuntimeException("Ошибка при сохранении аватарки: " + ex.getMessage());
+        }
+    }
+
+
+    @Override
+    public void updateAvatar(MultipartFile file, Long userId) {
+        deleteAvatar(userId);
+        saveAvatar(file, userId);
+    }
+
+    @Override
+    public void deleteAvatar(Long userId) {
+        Attachments currentAvatar = repository.findByUserIdAndType(userId, "avatar");
+
+        if (currentAvatar != null) {
+            try {
+                Path filePath = Paths.get(currentAvatar.getPath());
+                Files.deleteIfExists(filePath);
+            } catch (IOException ex) {
+                throw new RuntimeException("Failed to delete avatar file: " + ex.getMessage());
+            }
+
+            repository.delete(currentAvatar);
+        }
+    }
+
+
+
 
     @Override
     public void deleteAttachmentById(Long id) {

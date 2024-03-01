@@ -22,12 +22,22 @@ public interface FileStorageService {
     AttachmentResponseDto findByReviewsId(Long id);
 
 
+    AttachmentResponseDto findByUserId(Long id);
+
+    AttachmentResponseDto findByUserIdAndType(Long id);
+
     AttachmentResponseDto saveAttachment(MultipartFile file, AttachmentRequestDto dto) throws IOException;
 
 
     void deleteByApplicationsId(Long id);
 
     AttachmentResponseDto getAttachmentById(Long id);
+
+    void saveAvatar(MultipartFile file, Long userId);
+
+    void updateAvatar(MultipartFile file, Long userId);
+
+    void deleteAvatar(Long userId);
 
     void deleteAttachmentById(Long id);
 

@@ -12,5 +12,8 @@ public interface AttachmentRepository extends JpaRepository<Attachments, Long> {
 
     Attachments findByApplicationsId(Long id);
     Attachments findByReviewsId(Long id);
+    Attachments findByUserIdAndType(Long id, String type);
+
+
     Optional<Attachments> findById(Long id);
 }
