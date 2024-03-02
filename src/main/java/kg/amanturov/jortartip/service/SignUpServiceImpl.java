@@ -9,6 +9,10 @@ import kg.amanturov.jortartip.security.WebSecurityConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Service
 public class SignUpServiceImpl implements SignUpService {
 
@@ -53,9 +57,14 @@ public class SignUpServiceImpl implements SignUpService {
     }
     private User mapSignUpRequestToUser(EmployeeSIgnUpDto signUpRequest) {
         User user = new User();
-
         user.setUsername(signUpRequest.getLogin());
         user.setInn(signUpRequest.getInn());
+        user.setAddress(signUpRequest.getAddress());
+        user.setPhone(signUpRequest.getPhone());
+        user.setEmail(signUpRequest.getEmail());
+        user.setPassportSerial(signUpRequest.getPassportSerial());
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+        user.setSignupDate(timestamp);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setRole(WebSecurityConfig.USER);
         return user;

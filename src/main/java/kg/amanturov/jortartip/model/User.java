@@ -29,6 +29,10 @@ public class User {
 
     private BigInteger inn;
 
+    private BigInteger phone;
+
+    private String address;
+
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)

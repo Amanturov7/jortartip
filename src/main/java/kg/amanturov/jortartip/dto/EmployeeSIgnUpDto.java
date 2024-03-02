@@ -18,8 +18,10 @@ public class EmployeeSIgnUpDto {
     @Size(min = 6, message = "Password must be at least 8 characters")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).*$", message = "Password must contain at least one letter and one digit")
     private String password;
-
+    private BigInteger phone;
+    private String address;
     private BigInteger inn;
+    private String passportSerial;
     private String email;
 
 }
