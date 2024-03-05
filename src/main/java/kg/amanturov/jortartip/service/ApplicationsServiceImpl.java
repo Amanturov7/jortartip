@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -215,6 +214,15 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ApplicationsDto> findAllByNumberAuto(String numberAuto) {
+        return repository.findAllByNumberAuto(numberAuto).stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+
 
 
 

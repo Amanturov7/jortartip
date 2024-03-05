@@ -89,6 +89,11 @@ public class ApplicationsController {
         return applicationsService.findLatest4Applications();
     }
 
+    @GetMapping("/by-gos-number")
+    public List<ApplicationsDto> getAllByGosNumber(@RequestParam(name="gosNumber") String gosNumber) {
+        return applicationsService.findAllByNumberAuto(gosNumber);
+    }
+
     @PutMapping(value = "/update")
     public ApplicationsDto updateApplication(
             @RequestBody ApplicationsDto applicationsDto

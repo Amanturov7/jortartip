@@ -27,6 +27,8 @@ public interface ApplicationsService {
 
     List<ApplicationsDto> findLatest4Applications();
 
+    List<ApplicationsDto> findAllByNumberAuto(String numberAuto);
+
     ApplicationsDto convertEntityToDto(Applications applications);
 
     void deleteApplications(Long id);
