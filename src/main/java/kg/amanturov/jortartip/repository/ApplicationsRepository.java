@@ -15,6 +15,6 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
     List<Applications> findAllByUserId(Long id);
     List<Applications> findTop4ByOrderByCreatedDateDesc();
 
-    List<Applications> findAllByNumberAuto(String numberAuto);
+    List<Applications> findAllByNumberAutoIgnoreCase(String numberAuto);
 
 }

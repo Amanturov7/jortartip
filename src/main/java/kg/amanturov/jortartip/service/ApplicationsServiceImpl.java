@@ -217,7 +217,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
 
     @Override
     public List<ApplicationsDto> findAllByNumberAuto(String numberAuto) {
-        return repository.findAllByNumberAuto(numberAuto).stream()
+        return repository.findAllByNumberAutoIgnoreCase(numberAuto).stream()
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
