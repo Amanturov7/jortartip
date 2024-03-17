@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -80,7 +82,8 @@ public class NotificationsServiceImpl implements NotificationsService {
     private Notifications  convertDtoToNotifications ( NotificationsDto notificationsDto){
         Notifications notifications = new Notifications();
         notifications.setDescription(notificationsDto.getDescription());
-        notifications.setCreatedDate(notificationsDto.getCreatedDate());
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+        notifications.setCreatedDate(timestamp);
         if(notificationsDto.getUserId() != null){
             notifications.setUser(userService.findById(notificationsDto.getUserId()));
         }
