@@ -1,12 +1,15 @@
 package kg.amanturov.jortartip.service;
 
+import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.EventDto;
+import kg.amanturov.jortartip.model.Applications;
 import kg.amanturov.jortartip.model.Event;
 import kg.amanturov.jortartip.repository.EventRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +29,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDto> findAll() {
-        return eventRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        List<Event> events = eventRepository.findAll();
+        List<EventDto> eventDtos = new ArrayList<>();
+        for (Event event : events) {
+            eventDtos.add(convertToDto(event));
+        }
+        return eventDtos;
     }
 
     @Override
