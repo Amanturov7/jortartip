@@ -1,5 +1,6 @@
 package kg.amanturov.jortartip.controller;
 
+import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.EventDto;
 import kg.amanturov.jortartip.service.EventService;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,11 @@ public class EventController {
     public ResponseEntity<List<EventDto>> getAllEvents() {
         List<EventDto> events = eventService.findAll();
         return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @GetMapping(value ="/points")
+    public List<EventDto> getEvents() {
+        return eventService.findAll();
     }
 
     @GetMapping(value ="/event/{id}")
