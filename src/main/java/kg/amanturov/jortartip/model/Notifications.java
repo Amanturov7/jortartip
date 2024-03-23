@@ -18,6 +18,7 @@ public class Notifications {
     private CommonReference notificationType;
 
     private String description;
+    private String title;
 
     private Timestamp createdDate;
 

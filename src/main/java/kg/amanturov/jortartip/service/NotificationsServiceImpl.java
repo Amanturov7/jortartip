@@ -71,6 +71,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     private NotificationsDto  convertNotificationsToDto ( Notifications notifications){
         NotificationsDto notificationsDto = new NotificationsDto();
         notificationsDto.setDescription(notifications.getDescription());
+        notificationsDto.setTitle(notifications.getTitle());
         notificationsDto.setId(notifications.getId());
         notificationsDto.setCreatedDate(notifications.getCreatedDate());
         notificationsDto.setUserId(userService.findById(notifications.getUser().getId()).getId());
@@ -82,6 +83,7 @@ public class NotificationsServiceImpl implements NotificationsService {
     private Notifications  convertDtoToNotifications ( NotificationsDto notificationsDto){
         Notifications notifications = new Notifications();
         notifications.setDescription(notificationsDto.getDescription());
+        notifications.setTitle(notificationsDto.getTitle());
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
         notifications.setCreatedDate(timestamp);
         if(notificationsDto.getUserId() != null){
