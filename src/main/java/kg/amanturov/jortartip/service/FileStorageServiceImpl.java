@@ -4,12 +4,15 @@ import kg.amanturov.jortartip.Exceptions.MyFileNotFoundException;
 import kg.amanturov.jortartip.dto.AttachmentRequestDto;
 import kg.amanturov.jortartip.dto.AttachmentResponseDto;
 import kg.amanturov.jortartip.model.Attachments;
+import kg.amanturov.jortartip.model.Tickets;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
 
+import kg.amanturov.jortartip.repository.TicketsRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -32,6 +36,8 @@ public class FileStorageServiceImpl implements FileStorageService {
     private final UserService userService;
     private final ApplicationsService applicationsService;
     private final ReviewService reviewService;
+    private final TicketsRepository ticketsRepository;
+
 
 
     @Value("${file.storage.photos}")
@@ -40,11 +46,12 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String videoDirectory;
 
 
-    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService, ReviewService reviewService) {
+    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService, ReviewService reviewService, TicketsRepository ticketsRepository) {
         this.repository = repository;
         this.userService = userService;
         this.applicationsService = applicationsService;
         this.reviewService = reviewService;
+        this.ticketsRepository = ticketsRepository;
     }
 
 
@@ -96,6 +103,23 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public AttachmentResponseDto findByReviewsId(Long id) {
         Attachments Attachment = repository.findByReviewsId(id);
+
+        if (Attachment != null) {
+            AttachmentResponseDto responseDto = mapToAttachmentResponseDto(Attachment);
+            String sanitizedFileName = responseDto.getName();
+            sanitizedFileName = sanitizedFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+            responseDto.setDownloadUrl("http://localhost:8080/rest/attachment/download/" + responseDto.getAttachmentId());
+            responseDto.setName(sanitizedFileName);
+            return responseDto;
+        } else {
+            return null;
+        }
+    }
+
+
+    @Override
+    public AttachmentResponseDto findByTicketsId(Long id) {
+        Attachments Attachment = repository.findByTicketsId(id);
 
         if (Attachment != null) {
             AttachmentResponseDto responseDto = mapToAttachmentResponseDto(Attachment);
@@ -179,8 +203,8 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setExtension(attachment.getExtension());
         responseDto.setName(attachment.getName());
 
-        if(attachment.getTicketsId() != null ){
-            responseDto.setTicketsId(attachment.getTicketsId().getId());
+        if(attachment.getTickets() != null ){
+            responseDto.setTicketsId(attachment.getTickets().getId());
         }
         responseDto.setAttachmentId(attachment.getId());
         if(attachment.getUser() != null) {
@@ -222,8 +246,8 @@ public class FileStorageServiceImpl implements FileStorageService {
             responseDto.setDescription(attachment.getDescription());
             responseDto.setOriginName(attachment.getName());
             responseDto.setExtension(attachment.getExtension());
-            if(attachment.getTicketsId() != null ){
-                responseDto.setTicketsId(attachment.getTicketsId().getId());
+            if(attachment.getTickets() != null ){
+                responseDto.setTicketsId(attachment.getTickets().getId());
             }
             if(attachment.getUser() != null) {
                 responseDto.setUserId(attachment.getUser().getId());
@@ -305,9 +329,11 @@ public class FileStorageServiceImpl implements FileStorageService {
         attachments.setPath(responseDto.getFilePath());
         attachments.setDescription(responseDto.getDescription());
 
-        if(responseDto.getTicketsId() != null ){
-            responseDto.setTicketsId(responseDto.getTicketsId());
+        if (responseDto.getTicketsId() != null) {
+            Optional<Tickets> ticketsOptional = ticketsRepository.findById(responseDto.getTicketsId());
+            ticketsOptional.ifPresent(attachments::setTickets);
         }
+
         if(responseDto.getUserId() != null) {
             attachments.setUser(userService.findById(responseDto.getUserId()));
         }
@@ -319,7 +345,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
         return attachments;
     }
-    private AttachmentResponseDto convertDtoToEntity(Attachments attachments) {
+    private AttachmentResponseDto convertEntityToDto(Attachments attachments) {
         AttachmentResponseDto responseDto = new AttachmentResponseDto();
         responseDto.setExtension(attachments.getExtension());
         responseDto.setType(attachments.getType());
@@ -327,8 +353,8 @@ public class FileStorageServiceImpl implements FileStorageService {
         responseDto.setFilePath(attachments.getPath());
         responseDto.setAttachmentId(attachments.getId());
         responseDto.setDescription(attachments.getDescription());
-        if(attachments.getTicketsId() != null ){
-            responseDto.setTicketsId(attachments.getTicketsId().getId());
+        if(attachments.getTickets() != null ){
+            responseDto.setTicketsId(attachments.getTickets().getId());
         }
         if(attachments.getUser() != null) {
             responseDto.setUserId(attachments.getUser().getId());
@@ -349,7 +375,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Override
     public AttachmentResponseDto getFileById(Long id) throws IOException {
         Attachments getById = repository.findById(id).get();
-        AttachmentResponseDto responseDto = convertDtoToEntity(getById);
+        AttachmentResponseDto responseDto = convertEntityToDto(getById);
         responseDto.setFile(convertFileFromPath(getById));
         return responseDto;
     }

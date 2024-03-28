@@ -87,6 +87,36 @@ public class AttachmentController {
                 .body(fileContent);
     }
 
+
+
+
+    @GetMapping(value = "/download/tickets/{id}")
+    public ResponseEntity<byte[]> findByTicketsId(@PathVariable Long id) throws IOException {
+        AttachmentResponseDto attachments = service.findByTicketsId(id);
+        if (attachments == null) {
+            return ResponseEntity.notFound().build();
+        }
+        byte[] fileContent;
+        try {
+            fileContent = readFileContent(attachments.getFilePath());
+        } catch (IOException e) {
+            throw new MyFileNotFoundException("Ошибка при чтении файла: " + e.getMessage());
+        }
+        String sanitizedFileName = attachments.getName();
+        sanitizedFileName = sanitizedFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", sanitizedFileName);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileContent.length)
+                .body(fileContent);
+    }
+
+
+
+
+
     @GetMapping(value = "/download/reviews/{id}")
     public ResponseEntity<byte[]> findByReviewsId(@PathVariable Long id) throws IOException {
         AttachmentResponseDto attachments = service.findByReviewsId(id);

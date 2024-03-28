@@ -1,4 +1,5 @@
 package kg.amanturov.jortartip.controller;
+import kg.amanturov.jortartip.Exceptions.MyFileNotFoundException;
 import kg.amanturov.jortartip.dto.TicketsDto;
 import kg.amanturov.jortartip.service.TicketsService;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,18 @@ public class TicketsController {
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
+    @GetMapping("/byNumber/{number}")
+    public ResponseEntity<List<TicketsDto>> findAllByTicketNumber(@PathVariable Integer number) {
+        List<TicketsDto> tickets = ticketsService.findAllByTicketNumber(number);
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
+    }
+
+    @GetMapping("/uniqueNumbers")
+    public ResponseEntity<List<Integer>> getUniqueTicketNumbers() {
+        List<Integer> uniqueNumbers = ticketsService.getUniqueTicketNumbers();
+        return new ResponseEntity<>(uniqueNumbers, HttpStatus.OK);
+    }
+
     @GetMapping(value ="/ticket/{id}")
     public ResponseEntity<TicketsDto> getTicketById(@PathVariable Long id) {
         return ticketsService.getTicketById(id)
@@ -31,14 +44,20 @@ public class TicketsController {
     }
 
     @PostMapping(value ="/create")
-    public ResponseEntity<TicketsDto> createTicket(@RequestBody TicketsDto ticketsDto) {
-        TicketsDto createdTicket = ticketsService.saveTicket(ticketsDto);
-        return new ResponseEntity<>(createdTicket, HttpStatus.CREATED);
+    public TicketsDto createTicket(@RequestBody TicketsDto ticketsDto) {
+        return ticketsService.saveTicket(ticketsDto);
     }
 
-    @DeleteMapping(value ="/delete/{id}")
-    public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
-        ticketsService.deleteTicket(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        try {
+            ticketsService.deleteTicket(id);
+            return ResponseEntity.ok("Applications and associated attachments deleted successfully");
+        } catch (MyFileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting applications: " + e.getMessage());
+        }
     }
 }

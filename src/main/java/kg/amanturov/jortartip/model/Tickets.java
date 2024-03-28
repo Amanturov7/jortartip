@@ -21,6 +21,12 @@ public class Tickets {
 
     private String correctAnswer;
 
+    private Integer ticketNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theme_id")
+    private CommonReference theme;
+
     private String option1;
 
     private String option2;

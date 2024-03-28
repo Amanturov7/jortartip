@@ -40,6 +40,6 @@ public class Attachments {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tickets_id")
-    private Tickets ticketsId;
+    private Tickets tickets;
 
 }

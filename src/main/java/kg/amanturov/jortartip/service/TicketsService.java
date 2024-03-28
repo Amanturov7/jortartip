@@ -1,6 +1,7 @@
 package kg.amanturov.jortartip.service;
 
 
+import kg.amanturov.jortartip.dto.EventDto;
 import kg.amanturov.jortartip.dto.TicketsDto;
 import kg.amanturov.jortartip.model.Tickets;
 
@@ -12,8 +13,13 @@ public interface TicketsService {
 
     Optional<TicketsDto>getTicketById(Long id);
 
+    List<Integer> getUniqueTicketNumbers();
+
+    TicketsDto findById(Long id);
 
     TicketsDto saveTicket(TicketsDto ticketsDto);
 
     void deleteTicket(Long id);
+
+    List<TicketsDto> findAllByTicketNumber(Integer number);
 }
