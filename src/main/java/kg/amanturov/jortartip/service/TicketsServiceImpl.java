@@ -88,8 +88,11 @@ public class TicketsServiceImpl implements TicketsService {
         ticketsDto.setQuestion(ticket.getQuestion());
         ticketsDto.setCorrectAnswer(ticket.getCorrectAnswer());
         ticketsDto.setTicketNumber(ticket.getTicketNumber());
-        ticketsDto.setThemeName(ticket.getTheme().getTitle());
-        ticketsDto.setThemeId(ticket.getTheme().getId());
+        if(ticket.getTheme()!=null) {
+            ticketsDto.setThemeName(ticket.getTheme().getTitle());
+            ticketsDto.setThemeId(ticket.getTheme().getId());
+
+        }
         ticketsDto.setOption1(ticket.getOption1());
         ticketsDto.setOption2(ticket.getOption2());
         ticketsDto.setOption3(ticket.getOption3());
@@ -102,7 +105,9 @@ public class TicketsServiceImpl implements TicketsService {
         ticket.setId(ticketsDto.getId());
         ticket.setQuestion(ticketsDto.getQuestion());
         ticket.setTicketNumber(ticketsDto.getTicketNumber());
-        ticket.setTheme(commonReferenceService.findById(ticketsDto.getThemeId()));
+        if(ticketsDto.getThemeId()!=null){
+            ticket.setTheme(commonReferenceService.findById(ticketsDto.getThemeId()));
+        }
         ticket.setCorrectAnswer(ticketsDto.getCorrectAnswer());
         ticket.setOption1(ticketsDto.getOption1());
         ticket.setOption2(ticketsDto.getOption2());
