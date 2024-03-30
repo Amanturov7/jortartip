@@ -7,6 +7,7 @@ public class NotificationsDto {
 
     private Long id;
     private Long notificationTypeId;
+    private String notificationName;
     private String description;
     private String title;
     private Timestamp createdDate;

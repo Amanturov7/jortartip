@@ -76,6 +76,7 @@ public class NotificationsServiceImpl implements NotificationsService {
         notificationsDto.setCreatedDate(notifications.getCreatedDate());
         notificationsDto.setUserId(userService.findById(notifications.getUser().getId()).getId());
         notificationsDto.setNotificationTypeId(commonReferenceService.findById(notifications.getNotificationType().getId()).getId());
+        notificationsDto.setNotificationName(commonReferenceService.findById(notifications.getNotificationType().getId()).getTitle());
         return notificationsDto;
     }
 
