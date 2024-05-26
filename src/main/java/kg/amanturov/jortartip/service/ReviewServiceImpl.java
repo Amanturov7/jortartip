@@ -1,7 +1,6 @@
 package kg.amanturov.jortartip.service;
 
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -9,7 +8,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.ReviewDto;
 import kg.amanturov.jortartip.model.*;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
@@ -24,8 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
     public List<ReviewDto> findAll() {
         List<Review> reviews = repository.findAll();
         return reviews.stream()
+                .filter(review -> !review.getIsArchived())
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
@@ -57,6 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewDto> findLatest4Reviews() {
         return repository.findTop4ByOrderByCreatedDateDesc().stream()
+                .filter(review -> !review.getIsArchived())
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
@@ -91,6 +89,7 @@ public class ReviewServiceImpl implements ReviewService {
         CommonReference reference = commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"3");
         if (existingReview != null) {
             existingReview.setStatus(reference);
+            existingReview.setIsArchived(true);
             repository.save(existingReview);
         }
     }
@@ -102,6 +101,8 @@ public class ReviewServiceImpl implements ReviewService {
         CriteriaQuery<Review> query = cb.createQuery(Review.class);
         Root<Review> root = query.from(Review.class);
         Predicate predicate = cb.conjunction();
+
+        predicate = cb.and(predicate, cb.equal(root.get("isArchived"), false));
 
         if (ecologicFactorsId != null) {
             predicate = cb.and(predicate, cb.equal(root.get("ecologicFactors").get("id"), ecologicFactorsId));
@@ -193,7 +194,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setLon(reviewDto.getLon());
         review.setLocationAddress(reviewDto.getLocationAddress());
         review.setDescription(reviewDto.getDescription());
-
+        review.setIsArchived(false);
         Date currentDate = new Date();
         review.setCreatedDate(new Timestamp(currentDate.getTime()));
 

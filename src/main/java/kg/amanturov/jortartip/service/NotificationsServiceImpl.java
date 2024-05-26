@@ -52,9 +52,11 @@ public class NotificationsServiceImpl implements NotificationsService {
     public List<NotificationsDto> findByUserIdAndNotificationTypeId(Long userId, Long typeId) {
         List<Notifications> notificationsList = repository.findByUserIdAndNotificationTypeId(userId, typeId);
         return notificationsList.stream()
+                .filter(notification -> !notification.getIsArchived())
                 .map(this::convertNotificationsToDto)
                 .collect(Collectors.toList());
     }
+
 
 
     @Override

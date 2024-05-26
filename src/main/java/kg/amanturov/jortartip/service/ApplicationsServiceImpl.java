@@ -121,6 +121,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         CommonReference reference = commonReferenceService.findByTypeIdAndCode(commonReferenceType.getId(),"3");
         if (existingApplication != null) {
             existingApplication.setStatus(reference);
+            existingApplication.setIsArchived(true);
             repository.save(existingApplication);
         }
     }
@@ -162,10 +163,13 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         List<Applications> applications = repository.findAll();
         List<ApplicationsDto> applicationsDtos = new ArrayList<>();
         for (Applications application : applications) {
-            applicationsDtos.add(convertEntityToDto(application));
+            if (!application.getIsArchived()) {
+                applicationsDtos.add(convertEntityToDto(application));
+            }
         }
         return applicationsDtos;
     }
+
 
     @Override
     public Page<ApplicationsDto> findAllApplicationsByFilters(Long typeViolations, String title,Long id,String numberAuto, Pageable pageable) {
@@ -173,7 +177,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         CriteriaQuery<Applications> query = cb.createQuery(Applications.class);
         Root<Applications> root = query.from(Applications.class);
         Predicate predicate = cb.conjunction();
-
+        predicate = cb.and(predicate, cb.equal(root.get("isArchived"), false));
         if (typeViolations != null) {
             predicate = cb.and(predicate, cb.equal(root.get("typeViolations").get("id"), typeViolations));
         }
@@ -211,6 +215,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     @Override
     public List<ApplicationsDto> findLatest4Applications() {
         return repository.findTop4ByOrderByCreatedDateDesc().stream()
+                .filter(applications -> !applications.getIsArchived())
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
@@ -268,6 +273,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applications.setLat(applicationsDto.getLat());
         applications.setLon(applicationsDto.getLon());
         applications.setPlace(applicationsDto.getPlace());
+        applications.setIsArchived(false);
         applications.setDateOfViolation(applicationsDto.getDateOfViolation());
         applications.setNumberAuto(applicationsDto.getNumberAuto());
         CommonReferenceType commonReferenceType = commonReferenceService.findTypeByCode("009");
