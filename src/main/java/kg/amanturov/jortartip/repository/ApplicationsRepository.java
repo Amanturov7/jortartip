@@ -11,6 +11,7 @@ import java.util.List;
 public interface ApplicationsRepository extends JpaRepository<Applications, Long> {
 
     List<Applications> findApplicationsByStatusIdAndUserId(Long status, Long id );
+    List<Applications> findApplicationsByUserIdAndIsArchived( Long id, Boolean bool );
 
     List<Applications> findAllByUserId(Long id);
     List<Applications> findTop4ByOrderByCreatedDateDesc();

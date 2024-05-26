@@ -22,6 +22,7 @@ public class ApplicationsDto {
     private Timestamp updateDate;
     private Timestamp dateOfViolation;
     private String numberAuto;
+    private Boolean isArchived;
 
 
     public ApplicationsDto() {

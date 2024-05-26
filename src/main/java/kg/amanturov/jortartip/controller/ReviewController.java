@@ -39,6 +39,14 @@ public class ReviewController {
         return reviewService.findLatest4Reviews();
     }
 
+    @GetMapping("/all/isarchived")
+    public List<ReviewDto> getAllByUserAndIsArchived(
+            @RequestParam (name = "userId") Long userId,
+            @RequestParam (name = "isArchived") Boolean bool)
+    {
+        return reviewService.findAllByUserIdAndIsArchived(bool,userId);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<Page<ReviewDto>> getFilteredReviews(
             @RequestParam(name = "ecologicFactorId", required = false) Long ecologicFactorsId,

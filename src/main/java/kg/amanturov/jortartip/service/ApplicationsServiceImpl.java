@@ -64,7 +64,10 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     public List<Applications> findByStatusAndUserId(Long status, Long id) {
         return repository.findApplicationsByStatusIdAndUserId(status, id);
     }
-
+    @Override
+    public List<Applications> findAllByUserIdAndIsArchived(Long id,Boolean bool) {
+        return repository.findApplicationsByUserIdAndIsArchived(id, bool);
+    }
 
     @Override
     public ApplicationsDto save(ApplicationsDto applicationsDto) {
@@ -244,6 +247,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
         applicationsDto.setUpdateDate(applications.getUpdateDate());
         applicationsDto.setDateOfViolation(applications.getDateOfViolation());
         applicationsDto.setNumberAuto(applications.getNumberAuto());
+        applicationsDto.setIsArchived(applications.getIsArchived());
 
         if(applications.getStatus() != null){
             applicationsDto.setStatus(applications.getStatus().getId());

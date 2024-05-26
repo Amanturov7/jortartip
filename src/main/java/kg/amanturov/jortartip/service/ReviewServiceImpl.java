@@ -50,6 +50,16 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<ReviewDto> findAllByUserIdAndIsArchived(Boolean bool, Long id) {
+        List<Review> reviews = repository.findReviewsByIsArchivedAndUserId(bool,id);
+        return reviews.stream()
+                .map(this::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+
+
 
     @Override
     public List<ReviewDto> findLatest4Reviews() {

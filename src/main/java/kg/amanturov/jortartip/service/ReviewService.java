@@ -12,6 +12,9 @@ import java.util.List;
 public interface ReviewService {
     List<ReviewDto> findAll();
 
+
+    List<ReviewDto> findAllByUserIdAndIsArchived(Boolean bool, Long id);
+
     List<ReviewDto> findLatest4Reviews();
 
     ReviewDto findReviewById(Long id);

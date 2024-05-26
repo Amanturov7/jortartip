@@ -53,6 +53,17 @@ public class ApplicationsController {
                 .map(applicationsService::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+    @GetMapping(value ="/all/isarchived")
+    public List<ApplicationsDto> getApplicationsByStatusAndUser(
+            @RequestParam (name = "userId") Long userId,
+            @RequestParam (name = "isArchived") Boolean bool
+
+    ) {
+        List<Applications> applicationsList = applicationsService.findAllByUserIdAndIsArchived(userId,bool);
+        return applicationsList.stream()
+                .map(applicationsService::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
 
     @PostMapping(value ="/create")
     public ApplicationsDto createApplication(@RequestBody ApplicationsDto applicationsDto) {

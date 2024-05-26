@@ -13,6 +13,8 @@ public interface ApplicationsService {
 
     List<Applications> findByStatusAndUserId(Long status, Long id);
 
+    List<Applications> findAllByUserIdAndIsArchived(Long id, Boolean bool);
+
     ApplicationsDto save(ApplicationsDto applicationsDto);
 
     ApplicationsDto update(ApplicationsDto applicationsDto);

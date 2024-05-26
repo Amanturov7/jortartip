@@ -12,5 +12,6 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findTop4ByOrderByCreatedDateDesc();
+    List<Review> findReviewsByIsArchivedAndUserId(Boolean bool, Long id);
 
 }
