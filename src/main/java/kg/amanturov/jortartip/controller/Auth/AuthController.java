@@ -63,6 +63,10 @@ public class AuthController {
     private String authenticateAndGetToken(String username, String password) {
         return tokenProvider.GenerateToken(username);
     }
+    @GetMapping("/test")
+    private String test() {
+        return "test";
+    }
 
     @PostMapping("/refresh-token")
     public ResponseEntity refreshToken(@RequestBody JwtToken jwtToken){

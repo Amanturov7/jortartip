@@ -19,6 +19,7 @@ public class Review {
 
     private String locationAddress;
 
+    private Boolean isArchived;
 
     private Timestamp createdDate;
 

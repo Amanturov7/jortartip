@@ -22,6 +22,8 @@ public class Notifications {
 
     private Timestamp createdDate;
 
+    private Boolean isArchived;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

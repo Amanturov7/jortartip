@@ -20,6 +20,8 @@ public class Applications {
 
     private String numberAuto;
 
+    private Boolean isArchived;
+
     private float lon;
 
     private float lat;
