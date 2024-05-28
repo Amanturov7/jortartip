@@ -1,5 +1,6 @@
 package kg.amanturov.jortartip.service;
 
+import kg.amanturov.jortartip.bot.MyTelegramBot;
 import kg.amanturov.jortartip.dto.ApplicationsDto;
 import kg.amanturov.jortartip.dto.EventDto;
 import kg.amanturov.jortartip.model.Applications;
@@ -19,12 +20,14 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CommonReferenceService commonReferenceService;
     private final UserService userService;
+    private final MyTelegramBot myTelegramBot;
 
 
-    public EventServiceImpl(EventRepository eventRepository, CommonReferenceService commonReferenceService, UserService userService) {
+    public EventServiceImpl(EventRepository eventRepository, CommonReferenceService commonReferenceService, UserService userService, MyTelegramBot myTelegramBot) {
         this.eventRepository = eventRepository;
         this.commonReferenceService = commonReferenceService;
         this.userService = userService;
+        this.myTelegramBot = myTelegramBot;
     }
 
     @Override
@@ -48,6 +51,13 @@ public class EventServiceImpl implements EventService {
     public EventDto save(EventDto eventDto) {
         Event event = convertToEntity(eventDto);
         Event savedEvent = eventRepository.save(event);
+        String caption = "Событие №: " + event.getId() + "\n" +
+                "Тип: " + event.getTitle() + "\n" +
+                "Описание: " + event.getDescription() + "\n" +
+                "Адрес: " + event.getAddress() + "\n" +
+                "Дата: " + event.getStartDate();
+        myTelegramBot.sendMessageToChannel(caption);
+
         return convertToDto(savedEvent);
     }
 

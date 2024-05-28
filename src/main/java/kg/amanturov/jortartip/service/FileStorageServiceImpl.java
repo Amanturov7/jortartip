@@ -1,10 +1,10 @@
 package kg.amanturov.jortartip.service;
 
 import kg.amanturov.jortartip.Exceptions.MyFileNotFoundException;
+import kg.amanturov.jortartip.bot.MyTelegramBot;
 import kg.amanturov.jortartip.dto.AttachmentRequestDto;
 import kg.amanturov.jortartip.dto.AttachmentResponseDto;
-import kg.amanturov.jortartip.model.Attachments;
-import kg.amanturov.jortartip.model.Tickets;
+import kg.amanturov.jortartip.model.*;
 import kg.amanturov.jortartip.repository.AttachmentRepository;
 
 import kg.amanturov.jortartip.repository.TicketsRepository;
@@ -37,7 +37,9 @@ public class FileStorageServiceImpl implements FileStorageService {
     private final ApplicationsService applicationsService;
     private final ReviewService reviewService;
     private final TicketsRepository ticketsRepository;
+    private final CommonReferenceService commonReferenceService;
 
+    private final MyTelegramBot myTelegramBot;
 
 
     @Value("${file.storage.photos}")
@@ -46,12 +48,14 @@ public class FileStorageServiceImpl implements FileStorageService {
     private String videoDirectory;
 
 
-    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService, ReviewService reviewService, TicketsRepository ticketsRepository) {
+    public FileStorageServiceImpl(AttachmentRepository repository, UserService userService, ApplicationsService applicationsService, ReviewService reviewService, TicketsRepository ticketsRepository, CommonReferenceService commonReferenceService, MyTelegramBot myTelegramBot) {
         this.repository = repository;
         this.userService = userService;
         this.applicationsService = applicationsService;
         this.reviewService = reviewService;
         this.ticketsRepository = ticketsRepository;
+        this.commonReferenceService = commonReferenceService;
+        this.myTelegramBot = myTelegramBot;
     }
 
 
@@ -193,6 +197,42 @@ public class FileStorageServiceImpl implements FileStorageService {
         Attachments attachments = convertDtoToEntity(responseDto);
         Attachments saved = repository.save(attachments);
         responseDto.setAttachmentId(saved.getId());
+
+        if (dto.getReviewsId() != null) {
+                Review review = reviewService.findById(dto.getReviewsId());
+                CommonReference reference = new CommonReference();
+                if(review.getEcologicFactors()!=null){
+                    reference =review.getEcologicFactors();
+                }
+                if(review.getRoads()!=null){
+                    reference =review.getRoads();
+                }
+                if(review.getRoadSign()!=null){
+                    reference =review.getRoadSign();
+                }
+                if(review.getLights()!=null){
+                    reference =review.getLights();
+                }
+
+            String caption = "Отзыв №: " + review.getId() + "\n" +
+                    "Тип отзыва: " + reference.getTitle() + "\n" +
+                    "Описание: " + review.getDescription() + "\n" +
+                    "Адрес: " + review.getLocationAddress() + "\n" +
+                    "Дата создания: " + review.getCreatedDate();
+                myTelegramBot.sendPhotoWithCaptionToChannel(responseDto.getFilePath(), caption);
+        }
+
+        if (dto.getApplicationsId() != null) {
+            Applications application = applicationsService.findById(dto.getApplicationsId());
+            CommonReference typeViolation = commonReferenceService.findById(application.getTypeViolations().getId());
+            String caption = "Нарушение №: " + application.getId() + "\n" +
+                    "Тип нарушения: " + application.getTitle() + "\n" +
+                    "Гос номер: " + application.getNumberAuto() + "\n" +
+                    "Адрес: " + application.getPlace() + "\n" +
+                    "Дата нарушения: " + application.getDateOfViolation();
+                myTelegramBot.sendPhotoWithCaptionToChannel(responseDto.getFilePath(), caption);
+        }
+
         return responseDto;
     }
 
