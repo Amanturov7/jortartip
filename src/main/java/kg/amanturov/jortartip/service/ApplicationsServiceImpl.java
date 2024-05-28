@@ -226,6 +226,7 @@ public class ApplicationsServiceImpl  implements  ApplicationsService{
     @Override
     public List<ApplicationsDto> findAllByNumberAuto(String numberAuto) {
         return repository.findAllByNumberAutoIgnoreCase(numberAuto).stream()
+                .filter(applications -> !applications.getIsArchived())
                 .map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
