@@ -1,5 +1,6 @@
 package kg.amanturov.jortartip.service;
 
+import kg.amanturov.jortartip.bot.MyTelegramBot;
 import kg.amanturov.jortartip.dto.SosDto;
 import kg.amanturov.jortartip.model.Sos;
 import kg.amanturov.jortartip.repository.SosRepository;
@@ -17,12 +18,14 @@ public class SosServiceImpl implements SosService {
     private final SosRepository sosRepository;
     private final CommonReferenceService commonReferenceService;
     private final UserService userService;
+    private final MyTelegramBot myTelegramBot;
 
     @Autowired
-    public SosServiceImpl(SosRepository sosRepository, CommonReferenceService commonReferenceService, UserService userService) {
+    public SosServiceImpl(SosRepository sosRepository, CommonReferenceService commonReferenceService, UserService userService, MyTelegramBot myTelegramBot) {
         this.sosRepository = sosRepository;
         this.commonReferenceService = commonReferenceService;
         this.userService = userService;
+        this.myTelegramBot = myTelegramBot;
     }
 
 
@@ -33,6 +36,15 @@ public class SosServiceImpl implements SosService {
         Date currentDate = new Date();
         sos.setCreated(new Timestamp(currentDate.getTime()));
         Sos savedSos = sosRepository.save(sos);
+        String caption = "\uD83C\uDD98 ВНИМАНИЕ! \uD83C\uDD98 №: " + savedSos.getId() + "\n" +
+                "Тип сигнала: " + savedSos.getTypeSos().getTitle() + "\n" +
+                "Описание: " + savedSos.getDescription() + "\n" +
+                "Адрес: " + savedSos.getAddress() + "\n" +
+                "Номер телефона: " + savedSos.getUser().getPhone() + "\n" +
+                "Доп. номер телефона: - "  + "\n" +
+                "Дата сигнала: " + savedSos.getCreated();
+
+        myTelegramBot.sendMessageToChannel(caption);
         return convertEntityToDto(savedSos);
     }
 

@@ -224,7 +224,6 @@ public class FileStorageServiceImpl implements FileStorageService {
 
         if (dto.getApplicationsId() != null) {
             Applications application = applicationsService.findById(dto.getApplicationsId());
-            CommonReference typeViolation = commonReferenceService.findById(application.getTypeViolations().getId());
             String caption = "Нарушение №: " + application.getId() + "\n" +
                     "Тип нарушения: " + application.getTitle() + "\n" +
                     "Гос номер: " + application.getNumberAuto() + "\n" +
