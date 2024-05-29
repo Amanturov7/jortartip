@@ -25,12 +25,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/rest/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final SignUpServiceImpl signUpService;
-
     private final RefresherTokenService refresherTokenService;
 
     @PostMapping("/authenticate")
