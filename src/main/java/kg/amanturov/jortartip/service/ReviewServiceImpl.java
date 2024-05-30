@@ -263,8 +263,12 @@ public class ReviewServiceImpl implements ReviewService {
             reviewDto.setEcologicFactorsName(review.getEcologicFactors().getTitle());
         }
 
-
-        reviewDto.setAttachmentId(attachmentRepository.findByReviewsId(review.getId()).getId());
+        Attachments attachment = attachmentRepository.findByReviewsId(review.getId());
+        if (attachment != null) {
+            reviewDto.setAttachmentId(attachment.getId());
+        } else {
+            reviewDto.setAttachmentId(null);
+        }
 
         return reviewDto;
     }
