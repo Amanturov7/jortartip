@@ -11,7 +11,6 @@ import kg.amanturov.jortartip.model.RefreshToken;
 import kg.amanturov.jortartip.security.RefresherTokenService;
 import kg.amanturov.jortartip.security.TokenProvider;
 import kg.amanturov.jortartip.service.SignUpServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,10 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/rest/auth")
 public class AuthController {
@@ -31,6 +27,13 @@ public class AuthController {
     private final TokenProvider tokenProvider;
     private final SignUpServiceImpl signUpService;
     private final RefresherTokenService refresherTokenService;
+
+    public AuthController(AuthenticationManager authenticationManager, TokenProvider tokenProvider, SignUpServiceImpl signUpService, RefresherTokenService refresherTokenService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+        this.signUpService = signUpService;
+        this.refresherTokenService = refresherTokenService;
+    }
 
     @PostMapping("/authenticate")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
